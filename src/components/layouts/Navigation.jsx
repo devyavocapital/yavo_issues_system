@@ -32,9 +32,14 @@ const Navigation = ({ user }) => {
 						</span>
 					</Dropdown.Header>
 					{user.category === 1 && (
-						<Link to="/crear-usuario" className="ml-4 hover:text-cyan-600">
-							Crear Usuario
-						</Link>
+						<div className="grid gap-2 mb-2">
+							<Link to="/crear-usuario" className="ml-4 hover:text-cyan-600">
+								Crear Usuario
+							</Link>
+							<Link to="/crear-categoria" className="ml-4 hover:text-cyan-600">
+								Crear Categoría
+							</Link>
+						</div>
 					)}
 					<Dropdown.Divider />
 					<div className="flex justify-center">

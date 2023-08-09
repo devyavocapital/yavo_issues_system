@@ -34,7 +34,6 @@ const CreateUser = () => {
 			"POST",
 			data,
 		);
-		console.log(response);
 
 		if (response?.error) {
 			setError(response.error);

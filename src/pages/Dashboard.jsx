@@ -7,7 +7,7 @@ const Dashboard = () => {
 			<section className="mt-10">
 				<ModuleControl />
 			</section>
-			<section className="w-full mt-10">
+			<section className="w-full mt-10 mx-auto">
 				<Table />
 			</section>
 		</main>

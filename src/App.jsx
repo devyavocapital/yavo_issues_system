@@ -3,6 +3,7 @@ import Layout from "./components/layouts/Layout";
 import CreateUser from "./pages/CreateUser";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import CreateCategory from "./pages/categories";
 
 function App() {
 	return (
@@ -16,6 +17,9 @@ function App() {
 				</Route>
 				<Route path="/crear-usuario" element={<Layout />}>
 					<Route index element={<CreateUser />} />
+				</Route>
+				<Route path="/crear-categoria" element={<Layout />}>
+					<Route index element={<CreateCategory />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

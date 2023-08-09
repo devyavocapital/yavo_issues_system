@@ -2,6 +2,7 @@ import { Accordion, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import useFilter from "../../hooks/useFilter";
 import { fetched } from "../utils/fetched";
+import { fnGetCategories } from "../utils/getFunctions";
 import { validateToken } from "../utils/validateToken";
 import ModalComment from "./module/modals/ModalComment";
 
@@ -9,8 +10,18 @@ const TableContainer = () => {
 	const { filter } = useFilter();
 	const [issues, setIssues] = useState();
 	const [comments, setComments] = useState();
-	const [sortAll, setSortAll] = useState({});
+	const [sortAll, setSortAll] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [category, setCategory] = useState();
+	const { isNew } = useFilter();
+
+	useEffect(() => {
+		const getCategories = async () => {
+			const categories = await fnGetCategories();
+			setCategory(categories);
+		};
+		getCategories();
+	}, []);
 
 	useEffect(() => {
 		const getIssues = async () => {
@@ -24,8 +35,8 @@ const TableContainer = () => {
 			setComments(response.comments[0]);
 		};
 
-		getIssues();
-	}, []);
+		!isNew && getIssues();
+	}, [isNew]);
 
 	useEffect(() => {
 		if (filter === "all") {
@@ -46,7 +57,7 @@ const TableContainer = () => {
 	) : (
 		<Accordion collapseAll>
 			{sortAll.map((issue) => (
-				<Accordion.Panel key={issue.id}>
+				<Accordion.Panel key={issue.NAMECLIENT}>
 					<Accordion.Title className={"text-xl"}>
 						{issue.NAMECLIENT} -{" "}
 						<span
@@ -60,7 +71,7 @@ const TableContainer = () => {
 							{issue.CREDITNUMBER}
 						</span>
 					</Accordion.Title>
-					<Accordion.Content>
+					<Accordion.Content key={issue.id}>
 						<div className="w-10/12 flex justify-between text-2xl mx-auto">
 							<p>NSS: {issue.SOCIALNUMBER}</p>
 							<p>Tarjeta: {issue.CARDNUMBER}</p>
@@ -70,6 +81,11 @@ const TableContainer = () => {
 								{issue.USER_ASSIGNATED === undefined
 									? "Sin asignar"
 									: issue.USER_ASSIGNATED}
+							</p>
+							<p>
+								{category.map(
+									(cat) => cat.ID === issue.CATEGORY_ID && cat.CATEGORY,
+								)}
 							</p>
 						</div>
 						{comments.map(
@@ -99,7 +115,7 @@ const TableContainer = () => {
 								),
 						)}
 
-						<ModalComment />
+						<ModalComment id={issue.id} />
 					</Accordion.Content>
 				</Accordion.Panel>
 			))}

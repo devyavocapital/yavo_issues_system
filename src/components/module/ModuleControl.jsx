@@ -1,4 +1,3 @@
-import ModuleFilters from "./ModuleFilters";
 import ModalForm from "./modals/ModalForm";
 
 const ModuleControl = () => {
@@ -6,7 +5,7 @@ const ModuleControl = () => {
 		<div className="w-8/12 mx-auto my-auto flex justify-between">
 			<ModalForm />
 
-			<ModuleFilters />
+			{/* <ModuleFilters /> */}
 		</div>
 	);
 };
