@@ -1,10 +1,12 @@
+import { fetched } from "../../utils/fetched";
+import Notification from "../Notification";
+import Navigation from "./Navigation";
+/* eslint-disable react/prop-types */
 import { Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { fetched } from "../../utils/fetched";
-import Navigation from "./Navigation";
 
-const Layout = () => {
+const Layout = ({ socket }) => {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
@@ -20,8 +22,13 @@ const Layout = () => {
 				`${import.meta.env.VITE_FRONTEND_API_URL}/login`,
 				"GET",
 			);
-
+			// console.log(response.usuario[0][0].email);
 			setUser(response.usuario[0][0]);
+			localStorage.setItem("userName", response.usuario[0][0].email);
+			socket.emit("newUser", {
+				user: response.usuario[0][0],
+				socketID: socket.id,
+			});
 			setLoading(false);
 		};
 
@@ -33,7 +40,9 @@ const Layout = () => {
 	) : (
 		<>
 			<header>
-				<Navigation user={user} />
+				<Navigation user={user} socket={socket} />
+				{/* Aparece cada que llega una notificacion */}
+				<Notification socket={socket} user={user} />
 			</header>
 			<Outlet />
 		</>

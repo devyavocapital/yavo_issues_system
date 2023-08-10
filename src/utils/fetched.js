@@ -5,7 +5,7 @@ export const fetched = async (token, endpoint, method, data) => {
 			"x-auth-token": token,
 			"Content-Type": "application/json",
 		},
-		body: method === "POST" ? JSON.stringify(data) : null,
+		body: method !== "GET" ? JSON.stringify(data) : null,
 	});
 
 	const response = await apiResult.json();

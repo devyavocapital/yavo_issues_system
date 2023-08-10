@@ -1,8 +1,9 @@
+import ModuleNotification from "../module/ModuleNotification";
 /* eslint-disable react/prop-types */
 import { Dropdown, Navbar } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Navigation = ({ user }) => {
+const Navigation = ({ user, socket }) => {
 	const navigate = useNavigate();
 
 	const handleSignOut = (e) => {
@@ -19,6 +20,7 @@ const Navigation = ({ user }) => {
 				</span>
 			</Navbar.Brand>
 			<div className="flex md:order-2">
+				<ModuleNotification socket={socket} user={user} />
 				<img
 					alt="User settings"
 					src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"

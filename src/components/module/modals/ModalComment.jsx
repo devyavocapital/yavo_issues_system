@@ -7,7 +7,7 @@ import { validateToken } from "../../../utils/validateToken";
 import { Button, Label, Modal, Select, Textarea } from "flowbite-react";
 import { useState } from "react";
 
-export default function ModalComment({ id }) {
+export default function ModalComment({ id, socket }) {
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [loading, setLoading] = useState(true);
@@ -33,9 +33,23 @@ export default function ModalComment({ id }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		handleSetNew(true);
-		const data = { ...values, id_issue: id };
-
 		const token = validateToken();
+
+		const data = { ...values, id_issue: id };
+		const dataNotification = {
+			userAssignated: data.userAssignated,
+			issue: data.id_issue,
+		};
+
+		if (values.userAssignated !== undefined) {
+			socket.emit("notification", dataNotification);
+			await fetched(
+				token,
+				`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
+				"POST",
+				dataNotification,
+			);
+		}
 		await fetched(
 			token,
 			`${import.meta.env.VITE_FRONTEND_API_URL}/comments`,

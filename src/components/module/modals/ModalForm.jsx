@@ -1,3 +1,9 @@
+import useFilter from "../../../../hooks/useFilter";
+import { fetched } from "../../../utils/fetched";
+import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
+import { statusFilters } from "../../../utils/statusFilters";
+import { validateToken } from "../../../utils/validateToken";
+/* eslint-disable react/prop-types */
 import {
 	Button,
 	Label,
@@ -7,13 +13,8 @@ import {
 	Textarea,
 } from "flowbite-react";
 import { useState } from "react";
-import useFilter from "../../../../hooks/useFilter";
-import { fetched } from "../../../utils/fetched";
-import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
-import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
 
-export default function ModalForm() {
+export default function ModalForm({ socket }) {
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [categories, setCategories] = useState();
@@ -42,9 +43,22 @@ export default function ModalForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		handleSetNew(true);
+		const token = validateToken();
 
 		const data = values;
-		const token = validateToken();
+		const dataNotification = {
+			userAssignated: data.assignTo,
+			nameClient: data.nameClient,
+			category: data.category,
+		};
+
+		socket.emit("notification", dataNotification);
+		await fetched(
+			token,
+			`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
+			"POST",
+			dataNotification,
+		);
 		await fetched(
 			token,
 			`${import.meta.env.VITE_FRONTEND_API_URL}/issues`,

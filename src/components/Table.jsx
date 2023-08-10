@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import TableContainer from "./TableContainer";
 
-const Table = () => {
+const Table = ({ socket, refresh }) => {
 	return (
 		<div className="w-11/12 mx-auto border">
-			<TableContainer />
+			<TableContainer socket={socket} refresh={refresh} />
 		</div>
 	);
 };

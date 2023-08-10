@@ -1,12 +1,13 @@
-import { Accordion, Spinner } from "flowbite-react";
-import { useEffect, useState } from "react";
 import useFilter from "../../hooks/useFilter";
 import { fetched } from "../utils/fetched";
 import { fnGetCategories } from "../utils/getFunctions";
 import { validateToken } from "../utils/validateToken";
 import ModalComment from "./module/modals/ModalComment";
+/* eslint-disable react/prop-types */
+import { Accordion, Spinner } from "flowbite-react";
+import { useEffect, useState } from "react";
 
-const TableContainer = () => {
+const TableContainer = ({ socket, refresh }) => {
 	const { filter } = useFilter();
 	const [issues, setIssues] = useState();
 	const [comments, setComments] = useState();
@@ -24,6 +25,7 @@ const TableContainer = () => {
 	}, []);
 
 	useEffect(() => {
+		console.log(refresh);
 		const getIssues = async () => {
 			const token = validateToken();
 			const response = await fetched(
@@ -36,7 +38,8 @@ const TableContainer = () => {
 		};
 
 		!isNew && getIssues();
-	}, [isNew]);
+		refresh && getIssues();
+	}, [isNew, refresh]);
 
 	useEffect(() => {
 		if (filter === "all") {
@@ -57,7 +60,7 @@ const TableContainer = () => {
 	) : (
 		<Accordion collapseAll>
 			{sortAll.map((issue) => (
-				<Accordion.Panel key={issue.NAMECLIENT}>
+				<Accordion.Panel key={issue.id}>
 					<Accordion.Title className={"text-xl"}>
 						{issue.NAMECLIENT} -{" "}
 						<span
@@ -115,7 +118,7 @@ const TableContainer = () => {
 								),
 						)}
 
-						<ModalComment id={issue.id} />
+						<ModalComment id={issue.id} socket={socket} />
 					</Accordion.Content>
 				</Accordion.Panel>
 			))}
