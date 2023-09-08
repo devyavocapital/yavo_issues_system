@@ -13,7 +13,7 @@ const CreateCategory = () => {
 	const handleCreateCategory = async (e) => {
 		e.preventDefault();
 		const data = { nameCategory: catRef.current.value };
-		const token = localStorage.getItem("yavocapital_session");
+		const token = localStorage.getItem("yavo_tickets_session");
 
 		const response = await fetched(
 			token,

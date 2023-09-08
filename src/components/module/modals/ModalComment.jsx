@@ -1,21 +1,24 @@
-import useFilter from "../../../../hooks/useFilter";
-import { fetched } from "../../../utils/fetched";
-import { fnGetNames } from "../../../utils/getFunctions";
-import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
-/* eslint-disable react/prop-types */
 import { Button, Label, Modal, Select, Textarea } from "flowbite-react";
 import { useState } from "react";
+import useSocket from "../../../../hooks/useSocket";
+import useToken from "../../../../hooks/useToken";
+import useUser from "../../../../hooks/useUser";
+import { fetched } from "../../../utils/fetched";
+import { getCurrentDay } from "../../../utils/formatDate";
+import { fnGetNames } from "../../../utils/getFunctions";
+import { statusFilters } from "../../../utils/statusFilters";
 
-export default function ModalComment({ id, socket }) {
+export default function ModalComment({ id, newComment }) {
+	const { user } = useUser();
+	const { token } = useToken();
+	const { socket } = useSocket();
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
-	const { handleSetNew } = useFilter();
 
 	const getNames = async () => {
-		const response = await fnGetNames();
+		const response = await fnGetNames(token);
 		setNames(response);
 
 		setTimeout(() => {
@@ -32,8 +35,6 @@ export default function ModalComment({ id, socket }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		handleSetNew(true);
-		const token = validateToken();
 
 		const data = { ...values, id_issue: id };
 		const dataNotification = {
@@ -43,27 +44,24 @@ export default function ModalComment({ id, socket }) {
 
 		if (values.userAssignated !== undefined) {
 			socket.emit("notification", dataNotification);
-			await fetched(
-				token,
-				`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
-				"POST",
-				dataNotification,
-			);
+			await fetched(token, "notifications", "POST", dataNotification);
 		}
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/comments`,
-			"POST",
-			data,
-		);
-		handleSetNew(false);
+		await fetched(token, "comments", "POST", data);
 		setOpenModal("");
+
+		const date = getCurrentDay();
+		newComment({
+			...values,
+			NOMBRECOMPLETO: `${user.nombre} ${user.apellido_paterno}`,
+			CREATED_AT: date,
+			DESCRIPTION: values.description,
+		});
 	};
 
 	return (
 		<>
 			<Button
-				gradientMonochrome="cyan"
+				className="bg-white text-black "
 				onClick={() => {
 					getNames();
 					setOpenModal("form-elements");

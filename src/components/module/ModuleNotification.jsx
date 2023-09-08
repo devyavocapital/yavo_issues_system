@@ -1,10 +1,15 @@
+import useSocket from "../../../hooks/useSocket";
+import useToken from "../../../hooks/useToken";
+import useUser from "../../../hooks/useUser";
 import { fetched } from "../../utils/fetched";
-import { validateToken } from "../../utils/validateToken";
 import NotificationRow from "../common/NotificationRow";
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 
-const ModuleNotification = ({ socket, user }) => {
+const ModuleNotification = () => {
+	const { user } = useUser();
+	const { socket } = useSocket();
+	const { token } = useToken();
 	const [notification, setNotification] = useState();
 	const [myOwn, setMyOwn] = useState(false);
 	const [allNotifications, setAllNotifications] = useState([]);
@@ -22,33 +27,26 @@ const ModuleNotification = ({ socket, user }) => {
 
 	const showPanel = () => {
 		setPanel(!panel);
-		handleNotification();
+		!panel && handleNotification();
 	};
 
 	const handleNotification = async () => {
-		const token = validateToken();
-		const notifications = await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
-			"GET",
-		);
-		console.log(notifications.notifications[0]);
+		const notifications = await fetched(token, "notifications", "GET");
 		setAllNotifications(notifications.notifications[0]);
 	};
-
 	return (
 		<div className="grid mx-5">
 			<button type="button" onClick={showPanel}>
 				{myOwn ? (
-					// rome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
-						stroke="currentColor"
+						stroke="white"
 						className="w-6 h-6"
 					>
+						<title>icon bell</title>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -56,15 +54,15 @@ const ModuleNotification = ({ socket, user }) => {
 						/>
 					</svg>
 				) : (
-					// rome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
-						stroke="currentColor"
+						stroke="white"
 						className="w-6 h-6"
 					>
+						<title>icon bell</title>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -74,12 +72,24 @@ const ModuleNotification = ({ socket, user }) => {
 				)}
 			</button>
 			{panel && (
-				<div className="w-[400px] h-auto bg-slate-100 border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl">
-					{allNotifications.length > 0 &&
+				<div className="w-[400px] h-auto bg-white border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl">
+					{allNotifications.length > 0 ? (
 						allNotifications.map(
 							(n) =>
-								n.ACTIVE && <NotificationRow key={n.id} notification={n} />,
-						)}
+								n.ACTIVE && (
+									<NotificationRow
+										key={n.id}
+										notification={n}
+										setAllNotifications={setAllNotifications}
+										allNotifications={allNotifications}
+									/>
+								),
+						)
+					) : (
+						<div className="w-full p-2">
+							<p>No tiene notificaciones </p>
+						</div>
+					)}
 				</div>
 			)}
 		</div>

@@ -1,25 +1,20 @@
+import useToken from "../../../hooks/useToken";
 import { fetched } from "../../utils/fetched";
-import { validateToken } from "../../utils/validateToken";
 
-/* eslint-disable react/prop-types */
-const IconDelete = ({ id }) => {
+const IconDelete = ({ id, allNotifications, setAllNotifications }) => {
+	const { token } = useToken();
+
 	const handleDelete = async () => {
 		const readed = null;
 		const active = 0;
 		const data = { id, readed, active };
 
-		const token = validateToken();
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
-			"PUT",
-			data,
-		);
+		await fetched(token, "notifications", "PUT", data);
+		setAllNotifications(allNotifications.filter((n) => n.id !== id && id));
 	};
 
 	return (
 		<button type="button" onClick={handleDelete}>
-			{/* rome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -28,6 +23,7 @@ const IconDelete = ({ id }) => {
 				stroke="currentColor"
 				className="w-6 h-6"
 			>
+				<title>icon delete</title>
 				<path
 					strokeLinecap="round"
 					strokeLinejoin="round"

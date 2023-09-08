@@ -1,20 +1,15 @@
+import useToken from "../../../hooks/useToken";
 import { fetched } from "../../utils/fetched";
-import { validateToken } from "../../utils/validateToken";
 
-/* eslint-disable react/prop-types */
 const IconReaded = ({ readed, id }) => {
+	const { token } = useToken();
+
 	const handleReaded = async () => {
 		const readed = 1;
 		const active = null;
 		const data = { id, readed, active };
 
-		const token = validateToken();
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
-			"PUT",
-			data,
-		);
+		await fetched(token, "notifications", "PUT", data);
 	};
 
 	return (

@@ -1,9 +1,11 @@
-/* eslint-disable react/prop-types */
-
 import IconDelete from "./IconDelete";
 import IconReaded from "./IconReaded";
 
-const NotificationRow = ({ notification }) => {
+const NotificationRow = ({
+	notification,
+	allNotifications,
+	setAllNotifications,
+}) => {
 	return (
 		<div
 			key={notification.id}
@@ -11,12 +13,20 @@ const NotificationRow = ({ notification }) => {
 		>
 			<div className="grid">
 				<p className="text-xl">{notification.CLIENT}</p>
-				<p className="text-[11px] ml-2">creado: {notification.CREATED_AT}</p>
+				{notification.CREATED_AT && (
+					<p className="text-[11px] ml-2">
+						creado: {notification.CREATED_AT.slice(0, 10)}
+					</p>
+				)}
 			</div>
 			<div className="flex gap-3 mr-5">
 				<IconReaded readed={notification.READED} id={notification.id} />
 
-				<IconDelete id={notification.id} />
+				<IconDelete
+					id={notification.id}
+					setAllNotifications={setAllNotifications}
+					allNotifications={allNotifications}
+				/>
 			</div>
 		</div>
 	);

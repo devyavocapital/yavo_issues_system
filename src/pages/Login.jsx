@@ -1,19 +1,30 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetched } from "../utils/fetched";
-import { validateToken } from "../utils/validateToken";
+import useToken from "../../hooks/useToken";
+import { fetched, getCurrentUser } from "../utils/fetched";
 
 const Login = () => {
 	const emailRef = useRef();
 	const passRef = useRef();
 	const [error, setError] = useState("");
-	const navigate = useNavigate();
+	const navigation = useNavigate();
+	const { token, handleToken } = useToken();
 
 	useEffect(() => {
-		const token = validateToken();
-		if (token) navigate("/dashboard");
-	}, []);
+		const isLogged = async () => {
+			if (!token) {
+				return;
+			}
+
+			const user = await getCurrentUser(token);
+			if (!user) {
+				return;
+			}
+			navigation("/dashboard");
+		};
+		isLogged();
+	}, [token]);
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -31,23 +42,17 @@ const Login = () => {
 			email: emailRef.current.value,
 			password: passRef.current.value,
 		};
-		const response = await fetched(
-			"",
-			`${import.meta.env.VITE_FRONTEND_API_URL}/login`,
-			"POST",
-			data,
-		);
-
+		const response = await fetched("", "login", "POST", data);
+		console.log(response);
 		if (response?.error) {
 			setError(response.error);
 			return;
 		}
 
 		setError("");
-		localStorage.setItem("yavocapital_session", response.token);
-
-		//redirect
-		response.token && navigate("/dashboard");
+		localStorage.setItem("yavo_tickets_session", response.token);
+		handleToken(response.token);
+		navigation("/dashboard");
 	};
 
 	return (

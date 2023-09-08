@@ -1,9 +1,3 @@
-import useFilter from "../../../../hooks/useFilter";
-import { fetched } from "../../../utils/fetched";
-import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
-import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
-/* eslint-disable react/prop-types */
 import {
 	Button,
 	Label,
@@ -13,19 +7,30 @@ import {
 	Textarea,
 } from "flowbite-react";
 import { useState } from "react";
+import useGlobal from "../../../../hooks/useGlobal";
+import useSocket from "../../../../hooks/useSocket";
+import useToken from "../../../../hooks/useToken";
+import useUser from "../../../../hooks/useUser";
+import { fetched } from "../../../utils/fetched";
+import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
+import { statusFilters } from "../../../utils/statusFilters";
+import { validateToken } from "../../../utils/validateToken";
 
-export default function ModalForm({ socket }) {
+export default function ModalForm() {
+	const { token } = useToken();
+	const { socket } = useSocket();
+	const { user } = useUser();
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [categories, setCategories] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
-	const { handleSetNew } = useFilter();
+	const { handleNewIssue } = useGlobal();
 
 	const getNames = async () => {
-		const response = await fnGetNames();
+		const response = await fnGetNames(token);
 		setNames(response);
-		const responseCat = await fnGetCategories();
+		const responseCat = await fnGetCategories(token);
 		setCategories(responseCat);
 
 		setTimeout(() => {
@@ -42,43 +47,38 @@ export default function ModalForm({ socket }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		handleSetNew(true);
 		const token = validateToken();
 
 		const data = values;
 		const dataNotification = {
 			userAssignated: data.assignTo,
-			nameClient: data.nameClient,
+			nameClient: `${data.nameClient} ${data.lastnameClient} ${data.motherLastnameClient}`,
 			category: data.category,
 		};
 
 		socket.emit("notification", dataNotification);
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/notifications`,
-			"POST",
-			dataNotification,
-		);
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/issues`,
-			"POST",
-			data,
-		);
-		handleSetNew(false);
+		await fetched(token, "notifications", "POST", dataNotification);
+		await fetched(token, "issues", "POST", data);
 		setOpenModal("");
+		handleNewIssue({
+			id: 0,
+			CREDITNUMBER: values.creditNumber,
+			NAMECLIENT: values.nameClient,
+			STATUS: values.status,
+			FULLNAME: `${user.nombre} ${user.apellido_paterno}`,
+		});
 	};
 
 	return (
 		<>
 			<Button
-				gradientMonochrome="cyan"
+				gradientDuoTone="cyanToBlue"
+				pill
 				onClick={() => {
 					getNames();
 					setOpenModal("form-elements");
 				}}
 			>
-				{/* rome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -87,6 +87,7 @@ export default function ModalForm({ socket }) {
 					stroke="currentColor"
 					className="w-5 h-5 mr-2"
 				>
+					<title>Close modal</title>
 					<path
 						strokeLinecap="round"
 						strokeLinejoin="round"
@@ -109,13 +110,44 @@ export default function ModalForm({ socket }) {
 						</h3>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="nameClient" value="Nombre del cliente" />
+								<Label
+									htmlFor="nameClient"
+									value="Nombre del cliente / comercio *"
+								/>
 							</div>
 							<TextInput
 								id="nameClient"
 								name="nameClient"
 								placeholder=""
 								required
+								onChange={(e) => handleChange(e)}
+							/>
+						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label
+									htmlFor="lastnameClient"
+									value="Apellido paterno del cliente"
+								/>
+							</div>
+							<TextInput
+								id="lastnameClient"
+								name="lastnameClient"
+								placeholder=""
+								onChange={(e) => handleChange(e)}
+							/>
+						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label
+									htmlFor="motherLastnameClient"
+									value="Apellido materno del cliente"
+								/>
+							</div>
+							<TextInput
+								id="motherLastnameClient"
+								name="motherLastnameClient"
+								placeholder=""
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
