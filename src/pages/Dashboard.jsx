@@ -24,8 +24,9 @@ const Dashboard = () => {
 
 	const getIssues = async () => {
 		const response = await fnGetIssues(token, null, null);
-		setIssues(response.issue);
-		setSortIssues(response.issue);
+		console.log(response.issue[0]);
+		setIssues(response.issue[0]);
+		setSortIssues(response.issue[0]);
 	};
 
 	useEffect(() => {
@@ -66,7 +67,7 @@ const Dashboard = () => {
 	return (
 		<main className="w-full grid">
 			<section className="mt-10">
-				<ModuleControl />
+				<ModuleControl data={sortIssues} />
 			</section>
 			<section className="w-full mt-10 mx-auto">
 				<Table

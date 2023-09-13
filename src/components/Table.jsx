@@ -16,7 +16,6 @@ const Table = ({
 	issueSelected,
 	newComment,
 }) => {
-	console.log(issues);
 	return (
 		<div className="w-full lg:w-11/12 mx-auto border">
 			{loading ? (
@@ -39,6 +38,7 @@ const Table = ({
 									}
 									status={esStatus(issue.STATUS)}
 									lastComment={issue.ISSUE_DESC}
+									expired={issue.STATUS_ISSUE}
 								/>
 
 								<div className="flex space-x-3 justify-end">
