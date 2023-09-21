@@ -3,7 +3,7 @@ import { useState } from "react";
 import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
 import useUser from "../../../../hooks/useUser";
-import { fetched } from "../../../utils/fetched";
+import { fetched, fetchedImages } from "../../../utils/fetched";
 import { getCurrentDay } from "../../../utils/formatDate";
 import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
@@ -16,6 +16,7 @@ export default function ModalComment({ id, newComment }) {
 	const [names, setNames] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
+	const [inputFile, setInputFile] = useState({ file: [] });
 
 	const getNames = async () => {
 		const response = await fnGetNames(token);
@@ -24,6 +25,12 @@ export default function ModalComment({ id, newComment }) {
 		setTimeout(() => {
 			setLoading(false);
 		}, 500);
+	};
+
+	const handleFile = (e) => {
+		setInputFile({
+			file: e.target.files[0],
+		});
 	};
 
 	const handleChange = (e) => {
@@ -36,7 +43,12 @@ export default function ModalComment({ id, newComment }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const data = { ...values, id_issue: id };
+		const formData = new FormData();
+		formData.append("file", inputFile.file);
+
+		await fetchedImages(token, "images/uploads", "POST", formData);
+
+		const data = { ...values, id_issue: id, fileName: inputFile.file.name };
 		const dataNotification = {
 			userAssignated: data.userAssignated,
 			issue: data.id_issue,
@@ -55,6 +67,7 @@ export default function ModalComment({ id, newComment }) {
 			NOMBRECOMPLETO: `${user.nombre} ${user.apellido_paterno}`,
 			CREATED_AT: date,
 			DESCRIPTION: values.description,
+			PATH_FILE: inputFile.file.name,
 		});
 	};
 
@@ -144,6 +157,22 @@ export default function ModalComment({ id, newComment }) {
 										</option>
 									))}
 							</Select>
+						</div>
+						<div className="max-w-lg grid" id="select">
+							<div className="my-auto">
+								<Label
+									htmlFor="evidence"
+									value="Evidencia: "
+									className="text-xl mr-2"
+								/>
+							</div>
+							<input
+								type="file"
+								id="evidence"
+								name="evidence"
+								className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+								onChange={(e) => handleFile(e)}
+							/>
 						</div>
 						<div className="w-full">
 							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>

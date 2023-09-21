@@ -8,7 +8,6 @@ const ModuleComments = ({
 	issueSelected,
 	newComment,
 }) => {
-	console.log(issueSelected);
 	return (
 		<div className="fixed z-20 right-0 top-0 w-full h-screen bg-slate-800  bg-opacity-80">
 			<div className=" fixed w-3/4 lg:w-1/2 bg-cyan-700 right-0 h-screen opacity-100 bg-opacity-100">
@@ -53,12 +52,7 @@ const ModuleComments = ({
 						</span>
 					</p>
 				)}
-
-				{/* <p className="text-white text-center text-lg my-5">
-					{issueSelected.NAMECLIENT} -{" "}
-					<span>{esStatus(issueSelected.STATUS)}</span>
-				</p> */}
-				<ul className="divide-y divide-gray-200">
+				<ul className="divide-y divide-gray-200 overflow-y-auto h-[700px]">
 					{comments.map((comment) => {
 						return (
 							<li className="py-3 sm:py-4 px-5 mx-2 mb-2" key={comment.id}>
@@ -79,9 +73,15 @@ const ModuleComments = ({
 												Creado: {comment.CREATED_AT}
 											</span>
 										</p>
-										{/* <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-										email@windster.com
-									</p> */}
+										{typeof comment.PATH_FILE !== "object" ? (
+											<img
+												alt="evidencia de comentario"
+												src={`${
+													import.meta.env.VITE_FRONTEND_API_URL_IMG
+												}images/uploads/${comment.PATH_FILE}`}
+												className="w-6/12 rounded-lg"
+											/>
+										) : null}
 									</div>
 								</div>
 							</li>

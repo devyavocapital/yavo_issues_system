@@ -1,6 +1,7 @@
 import ModuleNotification from "../module/ModuleNotification";
 import NavbarBrand from "./navbar/NavbarBrand";
 import NavbarMenu from "./navbar/NavbarMenu";
+import NavbarSearching from "./navbar/NavbarSearching";
 import NavbarUser from "./navbar/NavbarUser";
 /* eslint-disable react/prop-types */
 import { Navbar } from "flowbite-react";
@@ -18,6 +19,8 @@ const Navigation = () => {
 	return (
 		<Navbar fluid className="bg-cyan-700">
 			<NavbarBrand />
+
+			<NavbarSearching />
 			<div className="flex md:order-2 ">
 				<NavbarMenu />
 

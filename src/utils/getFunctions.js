@@ -10,8 +10,12 @@ export const fnGetCategories = async (token) => {
 	return response.categories[0];
 };
 
-export const fnGetIssues = async (token) => {
-	const response = await fetched(token, "issues", "GET");
+export const fnGetIssues = async (token, nameClient, id) => {
+	const response = await fetched(
+		token,
+		`issues?nameClient=${nameClient}&id=${id}`,
+		"GET",
+	);
 	return response;
 };
 

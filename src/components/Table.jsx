@@ -1,5 +1,6 @@
 import { Card } from "flowbite-react";
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import { esStatus } from "../utils/statusFilters";
 import Spinner from "./common/Spinner";
 import TableAvatar from "./layouts/table/TableAvatar";
@@ -10,7 +11,7 @@ const Table = ({
 	loading,
 	issues,
 	comments,
-	category,
+	// category,
 	showComments,
 	handleComments,
 	issueSelected,
@@ -26,14 +27,20 @@ const Table = ({
 				issues.map((issue) => (
 					<Fragment key={issue.NAMECLIENT}>
 						<Card>
-							<div className="grid grid-cols-[20%_70%_10%] items-center">
+							<div className="grid grid-cols-[20%_65%_15%] items-center">
 								<TableAvatar name={issue.FULLNAME} />
 
 								<TableDescription
 									creditNumber={issue.CREDITNUMBER}
 									nameClient={
 										issue.LASTNAME !== undefined
-											? `${issue.NAMECLIENT} ${issue.LASTNAME} ${issue.MOTHERLASTNAME}`
+											? `${issue.NAMECLIENT} 
+												${issue.LASTNAME === null ? "" : issue.LASTNAME} 
+												${
+													issue.MOTHERLASTNAME === null
+														? ""
+														: issue.MOTHERLASTNAME
+												}`
 											: issue.NAMECLIENT
 									}
 									status={esStatus(issue.STATUS)}
@@ -42,7 +49,26 @@ const Table = ({
 								/>
 
 								<div className="flex space-x-3 justify-end">
-									{/* <ModalComment id={issue.id} /> */}
+									<Link to={`/dashboard/edit/${issue.id}`}>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="icon icon-tabler icon-tabler-edit"
+											width="44"
+											height="44"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											fill="none"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<title>icon Edit</title>
+											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+											<path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+											<path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+											<path d="M16 5l3 3" />
+										</svg>
+									</Link>
 									<button
 										type="button"
 										className="inline-flex items-center rounded-lg bg-cyan-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300"

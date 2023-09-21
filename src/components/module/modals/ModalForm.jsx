@@ -269,6 +269,19 @@ export default function ModalForm() {
 								)}
 							</Select>
 						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label htmlFor="daysConfig" value="Número de días a expirar" />
+							</div>
+							<TextInput
+								id="daysConfig"
+								name="daysConfig"
+								type="number"
+								min={0}
+								required
+								onChange={(e) => handleChange(e)}
+							/>
+						</div>
 						<div className="w-full">
 							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>
 						</div>

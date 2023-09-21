@@ -30,6 +30,14 @@ const NavbarUser = ({ handleSignOut }) => {
 					</div>
 				)}
 				<Dropdown.Divider />
+				<div className="grid gap-2 mb-2">
+					<Link
+						to="/dashboard/estadisticas"
+						className="ml-4 hover:text-cyan-600"
+					>
+						Estadistica
+					</Link>
+				</div>
 				<div className="flex justify-center">
 					<button
 						className="flex justify-center"
