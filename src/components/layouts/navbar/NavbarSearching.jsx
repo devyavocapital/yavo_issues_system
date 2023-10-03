@@ -11,7 +11,7 @@ const NavbarSearching = () => {
 	return (
 		<form className="w-5/12" onSubmit={handleSubmit}>
 			<label
-				for="default-search"
+				htmlFor="default-search"
 				className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
 			>
 				Search

@@ -1,9 +1,11 @@
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useToken from "../../hooks/useToken";
 import { fetched } from "../utils/fetched";
 
 const CreateUser = () => {
+	const { token } = useToken();
 	const emailRef = useRef();
 	const passRef = useRef();
 	const nameRef = useRef();
@@ -26,20 +28,15 @@ const CreateUser = () => {
 			ap_paterno: lastnameRef.current.value,
 			ap_materno: secLastnameRef.current.value,
 		};
-		const token = localStorage.getItem("yavocapital_session");
 
-		const response = await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/create`,
-			"POST",
-			data,
-		);
+		const response = await fetched(token, "create", "POST", data);
 
-		if (response?.error) {
+		if (response?.error !== undefined) {
 			setError(response.error);
 			return;
 		}
 
+		setError(null);
 		setMsg(response.msg);
 		setTimeout(() => {
 			navigate("/dashboard");

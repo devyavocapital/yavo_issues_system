@@ -3,7 +3,7 @@ import React from "react";
 
 const NavbarBrand = () => {
 	return (
-		<Navbar.Brand href="/">
+		<Navbar.Brand href="/dashboard">
 			<span>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

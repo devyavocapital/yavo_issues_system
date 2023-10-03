@@ -5,7 +5,7 @@ export const fetched = async (token, endpoint, method, data) => {
 		"x-auth-token": token,
 	});
 	headersInit.append("Content-Type", "application/json");
-
+	console.log({ token, endpoint, method, data });
 	try {
 		const apiResult = await fetch(`${api}/${endpoint}`, {
 			method,
@@ -42,6 +42,5 @@ export const fetchedImages = async (token, endpoint, method, data) => {
 
 export const getCurrentUser = async (token) => {
 	const response = await fetched(token, "login", "GET", {});
-
-	return response.usuario[0][0];
+	return response[0][0];
 };

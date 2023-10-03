@@ -23,8 +23,8 @@ const Dashboard = () => {
 		const valueSearching =
 			searchingRef.current.value === "" ? "null" : searchingRef.current.value;
 		const response = await fnGetIssues(token, valueSearching, null);
-		setIssues(response.issue[0]);
-		setSortIssues(response.issue[0]);
+		setIssues(response);
+		setSortIssues(response);
 	};
 
 	useEffect(() => {
