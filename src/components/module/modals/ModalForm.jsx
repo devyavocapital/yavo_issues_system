@@ -14,7 +14,6 @@ import useUser from "../../../../hooks/useUser";
 import { fetched } from "../../../utils/fetched";
 import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
 
 export default function ModalForm() {
 	const { token } = useToken();
@@ -25,6 +24,7 @@ export default function ModalForm() {
 	const [categories, setCategories] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
+	const [zodError, setZodError] = useState(null);
 	const { handleNewIssue } = useGlobal();
 
 	const getNames = async () => {
@@ -47,19 +47,27 @@ export default function ModalForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const token = validateToken();
 
 		const data = values;
 		const dataNotification = {
-			userAssignated: data.assignTo,
-			nameClient: `${data.nameClient} ${data.lastnameClient} ${data.motherLastnameClient}`,
+			userAssignated: data?.assignTo === undefined ? 0 : data.assignTo,
+			nameClient: `${data.nameClient} ${
+				data.lastnameClient === undefined ? "" : data.lastnameClient
+			} ${
+				data.motherLastnameClient === undefined ? "" : data.motherLastnameClient
+			}`,
 			category: data.category,
 		};
 
 		socket.emit("notification", dataNotification);
 		await fetched(token, "notifications", "POST", dataNotification);
-		await fetched(token, "issues", "POST", data);
-		setOpenModal("");
+		const response = await fetched(token, "issues", "POST", data);
+
+		if (response?.zodError) {
+			setZodError(response.zodError);
+			return;
+		}
+
 		handleNewIssue({
 			id: 0,
 			CREDITNUMBER: values.creditNumber,
@@ -67,6 +75,7 @@ export default function ModalForm() {
 			STATUS: values.status,
 			FULLNAME: `${user.nombre} ${user.apellido_paterno}`,
 		});
+		setOpenModal("");
 	};
 
 	return (
@@ -104,7 +113,7 @@ export default function ModalForm() {
 			>
 				<Modal.Header />
 				<Modal.Body>
-					<div className="space-y-6">
+					<form className="space-y-6" onSubmit={(e) => handleSubmit(e)}>
 						<h3 className="text-xl font-medium text-gray-900 dark:text-white">
 							Agregar nuevo ticket
 						</h3>
@@ -153,7 +162,7 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="creditNumber" value="Número de crédito" />
+								<Label htmlFor="creditNumber" value="Número de crédito *" />
 							</div>
 							<TextInput
 								id="creditNumber"
@@ -165,7 +174,10 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="socialNumber" value="Número de seguro social" />
+								<Label
+									htmlFor="socialNumber"
+									value="Número de seguro social *"
+								/>
 							</div>
 							<TextInput
 								id="socialNumber"
@@ -183,7 +195,6 @@ export default function ModalForm() {
 								id="cardNumber"
 								name="cardNumber"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -195,7 +206,6 @@ export default function ModalForm() {
 								id="initialComment"
 								name="initialComment"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -206,10 +216,9 @@ export default function ModalForm() {
 							<Select
 								id="assignTo"
 								name="assignTo"
-								required
 								onChange={(e) => handleChange(e)}
 							>
-								<option value={0} name={0} selected>
+								<option value={0} selected>
 									Sin Asignar
 								</option>
 								{!loading &&
@@ -227,12 +236,9 @@ export default function ModalForm() {
 							<Select
 								id="category"
 								name="category"
-								required
 								onChange={(e) => handleChange(e)}
 							>
-								<option value={""} name={""}>
-									Sin Asignar
-								</option>
+								<option value={""}>Sin Asignar</option>
 								{!loading &&
 									categories.map((category) => (
 										<option
@@ -247,7 +253,7 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="status" value="Estatus" />
+								<Label htmlFor="status" value="Estatus *" />
 							</div>
 							<Select
 								id="status"
@@ -255,6 +261,9 @@ export default function ModalForm() {
 								required
 								onChange={(e) => handleChange(e)}
 							>
+								<option value={""} disabled selected>
+									Sin Status
+								</option>
 								{statusFilters.map(
 									(status) =>
 										status.name !== "all" && (
@@ -271,7 +280,10 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="daysConfig" value="Número de días a expirar" />
+								<Label
+									htmlFor="daysConfig"
+									value="Número de días a expirar *"
+								/>
 							</div>
 							<TextInput
 								id="daysConfig"
@@ -282,10 +294,13 @@ export default function ModalForm() {
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
+						{zodError?.map((z) => (
+							<p key={z.code}>{z.message}</p>
+						))}
 						<div className="w-full">
-							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>
+							<Button type="submit">Agregar</Button>
 						</div>
-					</div>
+					</form>
 				</Modal.Body>
 			</Modal>
 		</>

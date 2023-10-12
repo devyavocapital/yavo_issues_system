@@ -36,6 +36,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		if (Object.keys(newIssue).length > 0) {
 			setSortIssues([newIssue, ...issues]);
+			return;
 		}
 		if (filter === "all") {
 			setSortIssues(issues);
@@ -74,7 +75,7 @@ const Dashboard = () => {
 	}, [expired]);
 
 	const handleComments = async (issue) => {
-		issue.id !== 0
+		issue.id !== 0 && issue !== 0
 			? setComments(await fnGetComments(token, issue.id))
 			: setComments([]);
 		setShowComments(!showComments);

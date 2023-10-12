@@ -13,6 +13,7 @@ const CreateUser = () => {
 	const secLastnameRef = useRef();
 	const [category, setCategory] = useState(null);
 	const [error, setError] = useState(null);
+	const [zodError, setZodError] = useState(null);
 	const [msg, setMsg] = useState(null);
 
 	const navigate = useNavigate();
@@ -24,15 +25,22 @@ const CreateUser = () => {
 			email: emailRef.current.value,
 			password: passRef.current.value,
 			category,
-			nombre: nameRef.current.value,
-			ap_paterno: lastnameRef.current.value,
-			ap_materno: secLastnameRef.current.value,
+			name: nameRef.current.value,
+			lastname: lastnameRef.current.value,
+			motherLastname: secLastnameRef.current.value,
 		};
 
 		const response = await fetched(token, "create", "POST", data);
 
 		if (response?.error !== undefined) {
 			setError(response.error);
+			return;
+		}
+		if (response?.zodError !== undefined) {
+			console.log(response.zodError);
+			console.log(Object.keys(response.zodError));
+			console.log(Object.keys(response.zodError).length);
+			setZodError(response.zodError);
 			return;
 		}
 
@@ -50,6 +58,9 @@ const CreateUser = () => {
 				onSubmit={handleCreateUser}
 			>
 				<h1 className="text-5xl">Nuevo Usuario</h1>
+				{zodError?.map((z) => (
+					<p key={z.code}>{z.message}</p>
+				))}
 				{error && <p className="italic text-red-600">{error}</p>}
 				{msg && <p className="italic text-ingido-600">{msg}</p>}
 				<div>

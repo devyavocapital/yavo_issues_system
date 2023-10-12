@@ -73,7 +73,9 @@ const ModuleComments = ({
 												Creado: {comment.CREATED_AT}
 											</span>
 										</p>
-										{typeof comment.PATH_FILE !== "object" ? (
+										{comment.PATH_FILE !== "null" &&
+										comment.PATH_FILE !== "undefined" &&
+										comment.PATH_FILE !== "NULL" ? (
 											<img
 												alt="evidencia de comentario"
 												src={`${

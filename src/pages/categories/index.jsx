@@ -15,13 +15,7 @@ const CreateCategory = () => {
 		const data = { nameCategory: catRef.current.value };
 		const token = localStorage.getItem("yavo_tickets_session");
 
-		const response = await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/categories`,
-			"POST",
-			data,
-		);
-
+		const response = await fetched(token, "categories", "POST", data);
 		if (response?.error) {
 			setError(response.error);
 			return;

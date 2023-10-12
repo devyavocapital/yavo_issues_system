@@ -29,15 +29,19 @@ const Table = ({
 						<Card>
 							<div className="grid grid-cols-[20%_65%_15%] items-center">
 								<TableAvatar name={issue.FULLNAME} />
-
 								<TableDescription
 									creditNumber={issue.CREDITNUMBER}
 									nameClient={
 										issue.LASTNAME !== undefined
 											? `${issue.NAMECLIENT} 
-												${issue.LASTNAME === null ? "" : issue.LASTNAME} 
 												${
-													issue.MOTHERLASTNAME === null
+													issue.LASTNAME === null || issue.LASTNAME === "null"
+														? ""
+														: issue.LASTNAME
+												} 
+												${
+													issue.MOTHERLASTNAME === null ||
+													issue.LASTNAME === "null"
 														? ""
 														: issue.MOTHERLASTNAME
 												}`
