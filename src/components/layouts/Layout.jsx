@@ -22,7 +22,6 @@ const Layout = () => {
 
 		const getUser = async () => {
 			const currentUser = await getCurrentUser(token);
-			console.log(currentUser);
 			handleUser(currentUser);
 			// localStorage.setItem("userName", currentUser.email);
 			currentUser !== null &&

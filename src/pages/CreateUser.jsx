@@ -36,15 +36,9 @@ const CreateUser = () => {
 			setError(response.error);
 			return;
 		}
-		if (response?.zodError !== undefined) {
-			console.log(response.zodError);
-			console.log(Object.keys(response.zodError));
-			console.log(Object.keys(response.zodError).length);
-			setZodError(response.zodError);
-			return;
-		}
 
 		setError(null);
+
 		setMsg(response.msg);
 		setTimeout(() => {
 			navigate("/dashboard");

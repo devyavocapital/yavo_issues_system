@@ -5,10 +5,12 @@ import useToken from "../../../../hooks/useToken";
 import useUser from "../../../../hooks/useUser";
 import { fetched, fetchedImages } from "../../../utils/fetched";
 import { getCurrentDay } from "../../../utils/formatDate";
+import { formatName } from "../../../utils/formatName";
 import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
 
 export default function ModalComment({ id, newComment }) {
+
 	const { user } = useUser();
 	const { token } = useToken();
 	const { socket } = useSocket();
@@ -20,6 +22,7 @@ export default function ModalComment({ id, newComment }) {
 
 	const getNames = async () => {
 		const response = await fnGetNames(token);
+		console.log(response)
 		setNames(response);
 
 		setTimeout(() => {
@@ -28,6 +31,7 @@ export default function ModalComment({ id, newComment }) {
 	};
 
 	const handleFile = (e) => {
+
 		setInputFile({
 			file: e.target.files[0],
 		});
@@ -48,13 +52,14 @@ export default function ModalComment({ id, newComment }) {
 
 		await fetchedImages(token, "images/uploads", "POST", formData);
 
-		const data = { ...values, id_issue: id, fileName: inputFile.file.name };
+		const data = { ...values, idIssue: id._id, fileName: inputFile.file.name };
+
 		const dataNotification = {
-			userAssignated: data.userAssignated,
-			issue: data.id_issue,
+			assignTo: data.assignTo,
+			issue: data.idIssue._id,
 		};
 
-		if (values.userAssignated !== undefined) {
+		if (values.assignTo !== undefined) {
 			socket.emit("notification", dataNotification);
 			await fetched(token, "notifications", "POST", dataNotification);
 		}
@@ -64,10 +69,10 @@ export default function ModalComment({ id, newComment }) {
 		const date = getCurrentDay();
 		newComment({
 			...values,
-			NOMBRECOMPLETO: `${user.nombre} ${user.apellido_paterno}`,
-			CREATED_AT: date,
-			DESCRIPTION: values.description,
-			PATH_FILE: inputFile.file.name,
+			nombreCompleto: `${user.nombre} ${user.apellido_paterno}`,
+			created_At: date,
+			description: values.description,
+			fileName: inputFile.file.name,
 		});
 	};
 
@@ -136,14 +141,14 @@ export default function ModalComment({ id, newComment }) {
 						<div className="max-w-lg flex" id="select">
 							<div className="my-auto">
 								<Label
-									htmlFor="userAssignated"
+									htmlFor="assingTo"
 									value="Reasignar a: "
 									className="text-xl mr-2"
 								/>
 							</div>
 							<Select
-								id="userAssignated"
-								name="userAssignated"
+								id="assingTo"
+								name="assingTo"
 								required
 								onChange={(e) => handleChange(e)}
 							>
@@ -152,8 +157,8 @@ export default function ModalComment({ id, newComment }) {
 								</option>
 								{!loading &&
 									names.map((name) => (
-										<option key={name.ID} value={name.ID} name={name.ID}>
-											{name.NOMBRE_COMPLETO}
+										<option key={name._id} value={name._id} name={name._id}>
+											{formatName({name: name.name, lastname: name.lastname})}
 										</option>
 									))}
 							</Select>

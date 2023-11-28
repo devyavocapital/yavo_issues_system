@@ -19,6 +19,7 @@ const GlobalProvider = ({ children }) => {
 	};
 
 	const handleExpired = (value) => {
+		console.log(value)
 		setExpired(value);
 	};
 

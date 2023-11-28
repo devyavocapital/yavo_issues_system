@@ -4,7 +4,7 @@ const TableDescription = ({
 	status,
 	creditNumber,
 	nameClient,
-	lastComment,
+	// lastComment,
 	expired,
 }) => {
 	return (
@@ -36,11 +36,11 @@ const TableDescription = ({
 			<div className="flex">
 				<p className="text-gray-900 place-self-center text-sm md:text-md lg:text-lg">
 					{nameClient}
-					{lastComment && (
+					{/* {lastComment && (
 						<span className="text-gray-500 place-self-center truncate text-sm md:text-md lg:text-lg">
 							: {lastComment}
 						</span>
-					)}
+					)} */}
 				</p>
 			</div>
 		</div>

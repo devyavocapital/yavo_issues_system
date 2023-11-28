@@ -2,6 +2,7 @@ import { Card } from "flowbite-react";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { esStatus } from "../utils/statusFilters";
+import { validateExpired } from "../utils/validateExpired";
 import Spinner from "./common/Spinner";
 import TableAvatar from "./layouts/table/TableAvatar";
 import TableDescription from "./layouts/table/TableDescription";
@@ -9,7 +10,7 @@ import ModuleComments from "./module/ModuleComments";
 
 const Table = ({
 	loading,
-	issues,
+	issues = [],
 	comments,
 	// category,
 	showComments,
@@ -20,36 +21,36 @@ const Table = ({
 	return (
 		<div className="w-full lg:w-11/12 mx-auto border">
 			{loading ? (
-				<div className="h-[500px] grid w-12/12">
+				<div className="h-screen grid w-12/12 place-items-center">
 					<Spinner aria-label="Extra large spinner example" size="xl" />
 				</div>
 			) : (
-				issues.map((issue) => (
-					<Fragment key={issue.NAMECLIENT}>
+				issues?.map((issue) => (
+					<Fragment key={issue._id}>
 						<Card>
 							<div className="grid grid-cols-[20%_65%_15%] items-center">
-								<TableAvatar name={issue.FULLNAME} />
+								<TableAvatar name={issue.nameClient} />
 								<TableDescription
-									creditNumber={issue.CREDITNUMBER}
+									creditNumber={issue.creditNumber}
 									nameClient={
-										issue.LASTNAME !== undefined
-											? `${issue.NAMECLIENT} 
+										issue.lastnameClient !== undefined
+											? `${issue.nameClient} 
 												${
-													issue.LASTNAME === null || issue.LASTNAME === "null"
+													issue.lastnameClient === null || issue.lastnameClient === "null"
 														? ""
-														: issue.LASTNAME
+														: issue.lastnameClient
 												} 
 												${
-													issue.MOTHERLASTNAME === null ||
-													issue.LASTNAME === "null"
+													issue.motherLastnameClient === null ||
+													issue.lastnameClient === "null"
 														? ""
-														: issue.MOTHERLASTNAME
+														: issue.motherLastnameClient
 												}`
-											: issue.NAMECLIENT
+											: issue.nameClient
 									}
-									status={esStatus(issue.STATUS)}
-									lastComment={issue.ISSUE_DESC}
-									expired={issue.STATUS_ISSUE}
+									status={esStatus(issue.status)}
+									// lastComment={issue.initialComment}
+									expired={validateExpired({days: issue.daysConfig, dateCreated: issue.created_At})}
 								/>
 
 								<div className="flex space-x-3 justify-end">

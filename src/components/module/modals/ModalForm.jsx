@@ -12,6 +12,7 @@ import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
 import useUser from "../../../../hooks/useUser";
 import { fetched } from "../../../utils/fetched";
+import { formatName } from "../../../utils/formatName";
 import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
 
@@ -49,6 +50,7 @@ export default function ModalForm() {
 		e.preventDefault();
 
 		const data = values;
+		console.log(data)
 		const dataNotification = {
 			userAssignated: data?.assignTo === undefined ? 0 : data.assignTo,
 			nameClient: `${data.nameClient} ${
@@ -63,16 +65,11 @@ export default function ModalForm() {
 		await fetched(token, "notifications", "POST", dataNotification);
 		const response = await fetched(token, "issues", "POST", data);
 
-		if (response?.zodError) {
-			setZodError(response.zodError);
-			return;
-		}
-
 		handleNewIssue({
-			id: 0,
-			CREDITNUMBER: values.creditNumber,
-			NAMECLIENT: values.nameClient,
-			STATUS: values.status,
+			id: response._id,
+			creditNumber: values.creditNumber,
+			nameClient: values.nameClient,
+			status: values.status,
 			FULLNAME: `${user.nombre} ${user.apellido_paterno}`,
 		});
 		setOpenModal("");
@@ -168,7 +165,6 @@ export default function ModalForm() {
 								id="creditNumber"
 								name={"creditNumber"}
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -183,7 +179,6 @@ export default function ModalForm() {
 								id="socialNumber"
 								name="socialNumber"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -217,14 +212,15 @@ export default function ModalForm() {
 								id="assignTo"
 								name="assignTo"
 								onChange={(e) => handleChange(e)}
+								
 							>
-								<option value={0} selected>
+								<option value={0} selected >
 									Sin Asignar
 								</option>
 								{!loading &&
-									names.map((name) => (
-										<option key={name.ID} value={name.ID}>
-											{name.NOMBRE_COMPLETO}
+									names.map(({_id, name, lastname}) => (
+										<option key={_id} value={formatName({name, lastname})}>
+											{formatName({name, lastname})}
 										</option>
 									))}
 							</Select>
@@ -237,16 +233,17 @@ export default function ModalForm() {
 								id="category"
 								name="category"
 								onChange={(e) => handleChange(e)}
+								
 							>
-								<option value={""}>Sin Asignar</option>
+								<option value={""} selected>Sin Asignar</option>
 								{!loading &&
-									categories.map((category) => (
+									categories.map(({_id, nameCategory}) => (
 										<option
-											key={category.ID}
-											value={category.ID}
-											name={category.ID}
+											key={_id}
+											value={_id}
+											name={_id}
 										>
-											{category.CATEGORY}
+											{nameCategory}
 										</option>
 									))}
 							</Select>
@@ -294,9 +291,6 @@ export default function ModalForm() {
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
-						{zodError?.map((z) => (
-							<p key={z.code}>{z.message}</p>
-						))}
 						<div className="w-full">
 							<Button type="submit">Agregar</Button>
 						</div>

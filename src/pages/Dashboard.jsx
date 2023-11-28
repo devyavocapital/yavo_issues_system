@@ -5,6 +5,7 @@ import Table from "../components/Table";
 import TabFilterExpired from "../components/layouts/table/TabFilterExpired";
 import ModuleControl from "../components/module/ModuleControl";
 import { fnGetComments, fnGetIssues } from "../utils/getFunctions";
+import { validateExpired } from "../utils/validateExpired";
 
 const Dashboard = () => {
 	const { token } = useToken();
@@ -43,7 +44,7 @@ const Dashboard = () => {
 			return;
 		}
 		if (filter !== "all") {
-			const sorted = issues.filter((i) => i.STATUS === filter);
+			const sorted = issues.filter((i) => i.status === filter);
 			setSortIssues(sorted);
 			return;
 		}
@@ -52,19 +53,19 @@ const Dashboard = () => {
 	// Order with the table menu
 	useEffect(() => {
 		if (expired === null && filter !== "all") {
-			const sorted = issues.filter((i) => i.STATUS === filter);
+			const sorted = issues.filter((i) => i.status === filter);
 			setSortIssues(sorted);
 			return;
 		}
 		if (expired !== null && filter !== "all") {
 			const sorted = issues.filter(
-				(i) => i.STATUS_ISSUE === expired && i.STATUS === filter,
+				(i) => validateExpired({days: i.daysConfig, dateCreated: i.created_At}) === expired && i.status === filter,
 			);
 			setSortIssues(sorted);
 			return;
 		}
 		if (expired !== null) {
-			const sorted = issues.filter((i) => i.STATUS_ISSUE === expired);
+			const sorted = issues.filter((i) => validateExpired({days: i.daysConfig, dateCreated: i.created_At}) === expired);
 			setSortIssues(sorted);
 			return;
 		}
@@ -75,8 +76,8 @@ const Dashboard = () => {
 	}, [expired]);
 
 	const handleComments = async (issue) => {
-		issue.id !== 0 && issue !== 0
-			? setComments(await fnGetComments(token, issue.id))
+		issue._id !== 0 && issue._id !== undefined
+			? setComments(await fnGetComments(token, issue._id))
 			: setComments([]);
 		setShowComments(!showComments);
 		setIssueSelected(issue);

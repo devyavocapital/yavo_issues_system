@@ -2,12 +2,14 @@ import { fetched } from "./fetched";
 
 export const fnGetNames = async (token) => {
 	const response = await fetched(token, "names", "GET");
-	return response[0];
+	console.log(response);
+	return response;
 };
 
 export const fnGetCategories = async (token) => {
 	const response = await fetched(token, "categories", "GET");
-	return response.categories[0];
+	console.log(response);
+	return response;
 };
 
 export const fnGetIssues = async (token, nameClient, id) => {
@@ -16,20 +18,20 @@ export const fnGetIssues = async (token, nameClient, id) => {
 		`issues?nameClient=${nameClient}&id=${id}`,
 		"GET",
 	);
-	return response[0];
+	return response;
 };
 
 export const fnGetComments = async (token, id_issue) => {
-	const response = await fetched(token, `comments?id=${id_issue}`, "GET");
-	return response[0];
+	const response = await fetched(token, `comments?idIssue=${id_issue}`, "GET");
+	return response;
 };
 
 export const fnGetStats = async (token) => {
 	const response = await fetched(token, "stats", "GET");
 	return {
-		stats: response.stats[0],
-		statsByUser: response.statsByUser[0],
-		statsCreated: response.statsCreated[0],
-		statsAssignated: response.statsAssignated[0],
+		stats: response.stats,
+		statsByUser: response.statsByUser,
+		statsCreated: response.statsCreated,
+		statsAssignated: response.statsAssignated,
 	};
 };

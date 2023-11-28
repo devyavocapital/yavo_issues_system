@@ -1,4 +1,6 @@
 import React from "react";
+import { dateFormated } from "../../utils/formatDate";
+import { formatName } from "../../utils/formatName";
 import { esStatus } from "../../utils/statusFilters";
 import ModalComment from "./modals/ModalComment";
 
@@ -32,30 +34,31 @@ const ModuleComments = ({
 						/>
 					</svg>
 				</button>
-				<h2 className="text-white text-center text-3xl lg:text-5xl my-5">
-					{issueSelected.NAMECLIENT} -{" "}
-					<span>{esStatus(issueSelected.STATUS)}</span>
+				<h2 className="text-white text-center text-3xl lg:text-5xl my-2">
+					{issueSelected.nameClient}
+					{/* <span></span> */}
 				</h2>
-				<h3 className="text-white text-center text-2xl my-5">
-					Folio: {issueSelected.id}
+				<p className="font-bold italic text-xl text-center my-0 py-0">{esStatus(issueSelected.status)}</p>
+				<h3 className="text-white text-center text-2xl my-2">
+					Folio: {issueSelected._id}
 				</h3>
 
-				{issueSelected.USER_ASSIGNATED === null ? (
-					<p className="text-white text-center text-xl my-5">
+				{issueSelected.assignTo === null || issueSelected.assignTo === undefined ? (
+					<p className="text-white text-center text-xl my-2">
 						No ha sido asignado
 					</p>
 				) : (
-					<p className="text-white text-center text-xl my-5">
+					<p className="text-white text-center text-xl my-2">
 						Asignado a:{" "}
 						<span className="font-bold text-2xl">
-							{issueSelected.USER_ASSIGNATED}
+							{issueSelected.assignTo}
 						</span>
 					</p>
 				)}
 				<ul className="divide-y divide-gray-200 overflow-y-auto h-[700px]">
-					{comments.map((comment) => {
+					{comments?.map((comment) => {
 						return (
-							<li className="py-3 sm:py-4 px-5 mx-2 mb-2" key={comment.id}>
+							<li className="py-3 sm:py-4 px-5 mx-2 mb-2" key={comment._id}>
 								<div className="flex items-center space-x-4">
 									<div className="shrink-0">
 										<img
@@ -66,21 +69,21 @@ const ModuleComments = ({
 									</div>
 									<div className="min-w-0 flex-1">
 										<p className=" text-xl font-medium text-gray-900 ">
-											{comment.NOMBRECOMPLETO}:{" "}
-											<span>{comment.DESCRIPTION}</span>
+											{!comment.nombreCompleto ? formatName({name: comment?.user[0]?.name, lastname: comment?.user[0]?.lastname}) : comment.nombreCompleto}:{" "}
+											<span>{comment.description}</span>
 											<br />
 											<span className="inline-flex items-center text-base font-semibold text-gray-900 ">
-												Creado: {comment.CREATED_AT}
+												Creado: {dateFormated(comment.created_At)}
 											</span>
 										</p>
-										{comment.PATH_FILE !== "null" &&
-										comment.PATH_FILE !== "undefined" &&
-										comment.PATH_FILE !== "NULL" ? (
+										{comment.fileName !== "null" &&
+										comment.fileName !== "undefined" &&
+										comment.fileName !== "NULL" ? (
 											<img
 												alt="evidencia de comentario"
 												src={`${
 													import.meta.env.VITE_FRONTEND_API_URL_IMG
-												}images/uploads/${comment.PATH_FILE}`}
+												}/images/uploads/${comment.fileName}`}
 												className="w-6/12 rounded-lg"
 											/>
 										) : null}
@@ -90,8 +93,8 @@ const ModuleComments = ({
 						);
 					})}
 				</ul>
-				<div className="grid w-4/12 mt-5 mx-auto">
-					<ModalComment id={issueSelected.id} newComment={newComment} />
+				<div className="grid w-4/12 mt-5 mb-3 mx-auto">
+					<ModalComment id={issueSelected} newComment={newComment} />
 				</div>
 			</div>
 		</div>
