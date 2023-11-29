@@ -17,7 +17,8 @@ export const fetched = async (token, endpoint, method, data) => {
 			body: method !== "GET" ? JSON.stringify(data) : null,
 		});
 
-		return await apiResult.json();
+		const response = await apiResult.json();
+		return response;
 	} catch (error) {
 		console.log(error);
 	}
