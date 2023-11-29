@@ -27,15 +27,15 @@ function App() {
 					<Route index element={<Login />} />
 				</Route>
 				{/* <Route path="/dashboard" element={<Layout socket={socket} />}> */}
-				<Route path="/dashboard" element={<Layout />}>
+				<Route path="dashboard" element={<Layout />}>
 					<Route index element={<Dashboard />} />
 					<Route path="edit/:id" element={<EditIssue />} />
 					<Route path="estadisticas" element={<Stats />} />
 				</Route>
-				<Route path="/crear-usuario" element={<Layout />}>
+				<Route path="crear-usuario" element={<Layout />}>
 					<Route index element={<CreateUser />} />
 				</Route>
-				<Route path="/crear-categoria" element={<Layout />}>
+				<Route path="crear-categoria" element={<Layout />}>
 					<Route index element={<CreateCategory />} />
 				</Route>
 			</Routes>
