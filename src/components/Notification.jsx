@@ -16,7 +16,7 @@ const Notification = () => {
 	}, [socket]);
 
 	useEffect(() => {
-		if (notification !== undefined && notification.userAssignated === user.id) {
+		if (notification !== undefined && notification.assignTo === user._id) {
 			setShow(true);
 			setNotifications([...notifications, notification]);
 		}

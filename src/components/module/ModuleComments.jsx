@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { dateFormated } from "../../utils/formatDate";
 import { formatName } from "../../utils/formatName";
 import { esStatus } from "../../utils/statusFilters";
@@ -10,6 +10,8 @@ const ModuleComments = ({
 	issueSelected,
 	newComment,
 }) => {
+	const [changeStatus, setChangeStatus] = useState(null);
+
 	return (
 		<div className="fixed z-20 right-0 top-0 w-full h-screen bg-slate-800  bg-opacity-80">
 			<div className=" fixed w-3/4 lg:w-1/2 bg-cyan-700 right-0 h-screen opacity-100 bg-opacity-100">
@@ -38,21 +40,29 @@ const ModuleComments = ({
 					{issueSelected.nameClient}
 					{/* <span></span> */}
 				</h2>
-				<p className="font-bold italic text-xl text-center my-0 py-0">{esStatus(issueSelected.status)}</p>
+				<p className="font-bold italic text-xl text-center my-0 py-0">
+					{changeStatus !== null
+						? esStatus(changeStatus.status)
+						: esStatus(issueSelected.status)}
+				</p>
 				<h3 className="text-white text-center text-2xl my-2">
 					Folio: {issueSelected._id}
 				</h3>
 
-				{issueSelected.assignTo === null || issueSelected.assignTo === undefined ? (
+				{changeStatus !== null ? (
+					<p className="text-white text-center text-xl my-2">
+						Asignado a:{" "}
+						<span className="font-bold text-2xl">{changeStatus.assignTo}</span>
+					</p>
+				) : issueSelected.assignTo === null ||
+				  issueSelected.assignTo === undefined ? (
 					<p className="text-white text-center text-xl my-2">
 						No ha sido asignado
 					</p>
 				) : (
 					<p className="text-white text-center text-xl my-2">
 						Asignado a:{" "}
-						<span className="font-bold text-2xl">
-							{issueSelected.assignTo}
-						</span>
+						<span className="font-bold text-2xl">{issueSelected.assignTo}</span>
 					</p>
 				)}
 				<ul className="divide-y divide-gray-200 overflow-y-auto h-[700px]">
@@ -69,8 +79,13 @@ const ModuleComments = ({
 									</div>
 									<div className="min-w-0 flex-1">
 										<p className=" text-xl font-medium text-gray-900 ">
-											{!comment.nombreCompleto ? formatName({name: comment?.user[0]?.name, lastname: comment?.user[0]?.lastname}) : comment.nombreCompleto}:{" "}
-											<span>{comment.description}</span>
+											{!comment.nombreCompleto
+												? formatName({
+														name: comment?.user[0]?.name,
+														lastname: comment?.user[0]?.lastname,
+												  })
+												: comment.nombreCompleto}
+											: <span>{comment.description}</span>
 											<br />
 											<span className="inline-flex items-center text-base font-semibold text-gray-900 ">
 												Creado: {dateFormated(comment.created_At)}
@@ -94,7 +109,11 @@ const ModuleComments = ({
 					})}
 				</ul>
 				<div className="grid w-4/12 mt-5 mb-3 mx-auto">
-					<ModalComment id={issueSelected} newComment={newComment} />
+					<ModalComment
+						id={issueSelected}
+						newComment={newComment}
+						setChangeStatus={setChangeStatus}
+					/>
 				</div>
 			</div>
 		</div>
