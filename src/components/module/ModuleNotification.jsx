@@ -1,10 +1,9 @@
+import { useEffect, useState } from "react";
 import useSocket from "../../../hooks/useSocket";
 import useToken from "../../../hooks/useToken";
 import useUser from "../../../hooks/useUser";
 import { fetched } from "../../utils/fetched";
 import NotificationRow from "../common/NotificationRow";
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
 
 const ModuleNotification = () => {
 	const { user } = useUser();
@@ -20,7 +19,7 @@ const ModuleNotification = () => {
 	}, [socket]);
 
 	useEffect(() => {
-		if (notification !== undefined && notification.userAssignated === user.id)
+		if (notification !== undefined && notification.assignTo === user._id)
 			setMyOwn(true);
 		if (notification === undefined) setMyOwn(false);
 	}, [notification]);
@@ -32,7 +31,7 @@ const ModuleNotification = () => {
 
 	const handleNotification = async () => {
 		const notifications = await fetched(token, "notifications", "GET");
-		setAllNotifications(notifications.notifications[0]);
+		setAllNotifications(notifications);
 	};
 	return (
 		<div className="grid mx-5">
@@ -72,13 +71,13 @@ const ModuleNotification = () => {
 				)}
 			</button>
 			{panel && (
-				<div className="w-[400px] h-auto bg-white border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl">
+				<div className="w-[400px] h-auto bg-white border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl z-10">
 					{allNotifications.length > 0 ? (
 						allNotifications.map(
 							(n) =>
-								n.ACTIVE && (
+								n.active && (
 									<NotificationRow
-										key={n.id}
+										key={n._id}
 										notification={n}
 										setAllNotifications={setAllNotifications}
 										allNotifications={allNotifications}
