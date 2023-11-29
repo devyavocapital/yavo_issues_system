@@ -24,7 +24,7 @@ const Login = () => {
 			navigation("/dashboard");
 		};
 		isLogged();
-	}, [token]);
+	}, []);
 
 	const handleLogin = async (e) => {
 		e.preventDefault();

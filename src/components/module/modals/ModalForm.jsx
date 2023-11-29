@@ -158,7 +158,7 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="creditNumber" value="Número de crédito *" />
+								<Label htmlFor="creditNumber" value="Número de crédito" />
 							</div>
 							<TextInput
 								id="creditNumber"
@@ -169,10 +169,7 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label
-									htmlFor="socialNumber"
-									value="Número de seguro social *"
-								/>
+								<Label htmlFor="socialNumber" value="Número de seguro social" />
 							</div>
 							<TextInput
 								id="socialNumber"
@@ -281,7 +278,7 @@ export default function ModalForm() {
 								id="daysConfig"
 								name="daysConfig"
 								type="number"
-								min={0}
+								min={1}
 								required
 								onChange={(e) => handleChange(e)}
 							/>
