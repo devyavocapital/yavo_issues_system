@@ -1,9 +1,11 @@
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useToken from "../../hooks/useToken";
 import { fetched } from "../utils/fetched";
 
 const CreateUser = () => {
+	const { token } = useToken();
 	const emailRef = useRef();
 	const passRef = useRef();
 	const nameRef = useRef();
@@ -11,6 +13,7 @@ const CreateUser = () => {
 	const secLastnameRef = useRef();
 	const [category, setCategory] = useState(null);
 	const [error, setError] = useState(null);
+	const [zodError, setZodError] = useState(null);
 	const [msg, setMsg] = useState(null);
 
 	const navigate = useNavigate();
@@ -22,23 +25,19 @@ const CreateUser = () => {
 			email: emailRef.current.value,
 			password: passRef.current.value,
 			category,
-			nombre: nameRef.current.value,
-			ap_paterno: lastnameRef.current.value,
-			ap_materno: secLastnameRef.current.value,
+			name: nameRef.current.value,
+			lastname: lastnameRef.current.value,
+			motherLastname: secLastnameRef.current.value,
 		};
-		const token = localStorage.getItem("yavocapital_session");
 
-		const response = await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/create`,
-			"POST",
-			data,
-		);
+		const response = await fetched(token, "create", "POST", data);
 
-		if (response?.error) {
+		if (response?.error !== undefined) {
 			setError(response.error);
 			return;
 		}
+
+		setError(null);
 
 		setMsg(response.msg);
 		setTimeout(() => {
@@ -53,6 +52,9 @@ const CreateUser = () => {
 				onSubmit={handleCreateUser}
 			>
 				<h1 className="text-5xl">Nuevo Usuario</h1>
+				{zodError?.map((z) => (
+					<p key={z.code}>{z.message}</p>
+				))}
 				{error && <p className="italic text-red-600">{error}</p>}
 				{msg && <p className="italic text-ingido-600">{msg}</p>}
 				<div>

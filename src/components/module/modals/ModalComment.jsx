@@ -1,26 +1,37 @@
-import useFilter from "../../../../hooks/useFilter";
-import { fetched } from "../../../utils/fetched";
-import { fnGetNames } from "../../../utils/getFunctions";
-import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
-/* eslint-disable react/prop-types */
 import { Button, Label, Modal, Select, Textarea } from "flowbite-react";
 import { useState } from "react";
+import useSocket from "../../../../hooks/useSocket";
+import useToken from "../../../../hooks/useToken";
+import useUser from "../../../../hooks/useUser";
+import { fetched, fetchedImages } from "../../../utils/fetched";
+import { getCurrentDay } from "../../../utils/formatDate";
+import { formatName } from "../../../utils/formatName";
+import { fnGetNames } from "../../../utils/getFunctions";
+import { statusFilters } from "../../../utils/statusFilters";
 
-export default function ModalComment({ id }) {
+export default function ModalComment({ id, newComment }) {
+	const { user } = useUser();
+	const { token } = useToken();
+	const { socket } = useSocket();
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
-	const { handleSetNew } = useFilter();
+	const [inputFile, setInputFile] = useState({ file: [] });
 
 	const getNames = async () => {
-		const response = await fnGetNames();
+		const response = await fnGetNames(token);
 		setNames(response);
 
 		setTimeout(() => {
 			setLoading(false);
 		}, 500);
+	};
+
+	const handleFile = (e) => {
+		setInputFile({
+			file: e.target.files[0],
+		});
 	};
 
 	const handleChange = (e) => {
@@ -32,24 +43,40 @@ export default function ModalComment({ id }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		handleSetNew(true);
-		const data = { ...values, id_issue: id };
 
-		const token = validateToken();
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/comments`,
-			"POST",
-			data,
-		);
-		handleSetNew(false);
+		const formData = new FormData();
+		formData.append("file", inputFile.file);
+
+		await fetchedImages(token, "images/uploads", "POST", formData);
+
+		const data = { ...values, idIssue: id._id, fileName: inputFile.file.name };
+
+		const dataNotification = {
+			assignTo: data.assignTo,
+			issue: data.idIssue._id,
+		};
+
+		if (values.assignTo !== undefined) {
+			socket.emit("notification", dataNotification);
+			await fetched(token, "notifications", "POST", dataNotification);
+		}
+		await fetched(token, "comments", "POST", data);
 		setOpenModal("");
+
+		const date = getCurrentDay();
+		newComment({
+			...values,
+			nombreCompleto: `${user.nombre} ${user.apellido_paterno}`,
+			created_At: date,
+			description: values.description,
+			fileName: inputFile.file.name,
+		});
 	};
 
 	return (
 		<>
 			<Button
-				gradientMonochrome="cyan"
+				className="bg-white text-black "
 				onClick={() => {
 					getNames();
 					setOpenModal("form-elements");
@@ -111,14 +138,14 @@ export default function ModalComment({ id }) {
 						<div className="max-w-lg flex" id="select">
 							<div className="my-auto">
 								<Label
-									htmlFor="userAssignated"
+									htmlFor="assingTo"
 									value="Reasignar a: "
 									className="text-xl mr-2"
 								/>
 							</div>
 							<Select
-								id="userAssignated"
-								name="userAssignated"
+								id="assingTo"
+								name="assingTo"
 								required
 								onChange={(e) => handleChange(e)}
 							>
@@ -127,11 +154,27 @@ export default function ModalComment({ id }) {
 								</option>
 								{!loading &&
 									names.map((name) => (
-										<option key={name.ID} value={name.ID} name={name.ID}>
-											{name.NOMBRE_COMPLETO}
+										<option key={name._id} value={name._id} name={name._id}>
+											{formatName({ name: name.name, lastname: name.lastname })}
 										</option>
 									))}
 							</Select>
+						</div>
+						<div className="max-w-lg grid" id="select">
+							<div className="my-auto">
+								<Label
+									htmlFor="evidence"
+									value="Evidencia: "
+									className="text-xl mr-2"
+								/>
+							</div>
+							<input
+								type="file"
+								id="evidence"
+								name="evidence"
+								className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+								onChange={(e) => handleFile(e)}
+							/>
 						</div>
 						<div className="w-full">
 							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>

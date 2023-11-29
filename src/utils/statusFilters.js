@@ -5,3 +5,11 @@ export const statusFilters = [
 	{ name: "attending", color: "#FF0707", status: 4, text: "Por Atender" },
 	// { name: "nonStatus", color: "#9B9B9B", status: 5, text: "Sin Estatus" },
 ];
+
+export const esStatus = (status) => {
+	let esText = "";
+	if (status === "pendient") esText = "Pendiente";
+	if (status === "finished") esText = "Finalizado";
+	if (status === "attending") esText = "Por Atender";
+	return esText;
+};

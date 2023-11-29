@@ -7,24 +7,31 @@ import {
 	Textarea,
 } from "flowbite-react";
 import { useState } from "react";
-import useFilter from "../../../../hooks/useFilter";
+import useGlobal from "../../../../hooks/useGlobal";
+import useSocket from "../../../../hooks/useSocket";
+import useToken from "../../../../hooks/useToken";
+import useUser from "../../../../hooks/useUser";
 import { fetched } from "../../../utils/fetched";
+import { formatName } from "../../../utils/formatName";
 import { fnGetCategories, fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
-import { validateToken } from "../../../utils/validateToken";
 
 export default function ModalForm() {
+	const { token } = useToken();
+	const { socket } = useSocket();
+	const { user } = useUser();
 	const [openModal, setOpenModal] = useState("");
 	const [names, setNames] = useState();
 	const [categories, setCategories] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
-	const { handleSetNew } = useFilter();
+	const [zodError, setZodError] = useState(null);
+	const { handleNewIssue } = useGlobal();
 
 	const getNames = async () => {
-		const response = await fnGetNames();
+		const response = await fnGetNames(token);
 		setNames(response);
-		const responseCat = await fnGetCategories();
+		const responseCat = await fnGetCategories(token);
 		setCategories(responseCat);
 
 		setTimeout(() => {
@@ -41,30 +48,42 @@ export default function ModalForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		handleSetNew(true);
 
 		const data = values;
-		const token = validateToken();
-		await fetched(
-			token,
-			`${import.meta.env.VITE_FRONTEND_API_URL}/issues`,
-			"POST",
-			data,
-		);
-		handleSetNew(false);
+		const dataNotification = {
+			userAssignated: data?.assignTo === undefined ? 0 : data.assignTo,
+			nameClient: `${data.nameClient} ${
+				data.lastnameClient === undefined ? "" : data.lastnameClient
+			} ${
+				data.motherLastnameClient === undefined ? "" : data.motherLastnameClient
+			}`,
+			category: data.category,
+		};
+
+		socket.emit("notification", dataNotification);
+		await fetched(token, "notifications", "POST", dataNotification);
+		const response = await fetched(token, "issues", "POST", data);
+
+		handleNewIssue({
+			id: response._id,
+			creditNumber: values.creditNumber,
+			nameClient: values.nameClient,
+			status: values.status,
+			FULLNAME: `${user.nombre} ${user.apellido_paterno}`,
+		});
 		setOpenModal("");
 	};
 
 	return (
 		<>
 			<Button
-				gradientMonochrome="cyan"
+				gradientDuoTone="cyanToBlue"
+				pill
 				onClick={() => {
 					getNames();
 					setOpenModal("form-elements");
 				}}
 			>
-				{/* rome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -73,6 +92,7 @@ export default function ModalForm() {
 					stroke="currentColor"
 					className="w-5 h-5 mr-2"
 				>
+					<title>Close modal</title>
 					<path
 						strokeLinecap="round"
 						strokeLinejoin="round"
@@ -89,13 +109,16 @@ export default function ModalForm() {
 			>
 				<Modal.Header />
 				<Modal.Body>
-					<div className="space-y-6">
+					<form className="space-y-6" onSubmit={(e) => handleSubmit(e)}>
 						<h3 className="text-xl font-medium text-gray-900 dark:text-white">
 							Agregar nuevo ticket
 						</h3>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="nameClient" value="Nombre del cliente" />
+								<Label
+									htmlFor="nameClient"
+									value="Nombre del cliente / comercio *"
+								/>
 							</div>
 							<TextInput
 								id="nameClient"
@@ -107,25 +130,54 @@ export default function ModalForm() {
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="creditNumber" value="Número de crédito" />
+								<Label
+									htmlFor="lastnameClient"
+									value="Apellido paterno del cliente"
+								/>
 							</div>
 							<TextInput
-								id="creditNumber"
-								name={"creditNumber"}
-								type="text"
-								required
+								id="lastnameClient"
+								name="lastnameClient"
+								placeholder=""
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="socialNumber" value="Número de seguro social" />
+								<Label
+									htmlFor="motherLastnameClient"
+									value="Apellido materno del cliente"
+								/>
+							</div>
+							<TextInput
+								id="motherLastnameClient"
+								name="motherLastnameClient"
+								placeholder=""
+								onChange={(e) => handleChange(e)}
+							/>
+						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label htmlFor="creditNumber" value="Número de crédito *" />
+							</div>
+							<TextInput
+								id="creditNumber"
+								name={"creditNumber"}
+								type="text"
+								onChange={(e) => handleChange(e)}
+							/>
+						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label
+									htmlFor="socialNumber"
+									value="Número de seguro social *"
+								/>
 							</div>
 							<TextInput
 								id="socialNumber"
 								name="socialNumber"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -137,7 +189,6 @@ export default function ModalForm() {
 								id="cardNumber"
 								name="cardNumber"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -149,7 +200,6 @@ export default function ModalForm() {
 								id="initialComment"
 								name="initialComment"
 								type="text"
-								required
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
@@ -160,16 +210,15 @@ export default function ModalForm() {
 							<Select
 								id="assignTo"
 								name="assignTo"
-								required
 								onChange={(e) => handleChange(e)}
 							>
-								<option value={0} name={0} selected>
+								<option value={0} selected>
 									Sin Asignar
 								</option>
 								{!loading &&
-									names.map((name) => (
-										<option key={name.ID} value={name.ID}>
-											{name.NOMBRE_COMPLETO}
+									names.map(({ _id, name, lastname }) => (
+										<option key={_id} value={formatName({ name, lastname })}>
+											{formatName({ name, lastname })}
 										</option>
 									))}
 							</Select>
@@ -181,27 +230,22 @@ export default function ModalForm() {
 							<Select
 								id="category"
 								name="category"
-								required
 								onChange={(e) => handleChange(e)}
 							>
-								<option value={""} name={""}>
+								<option value={""} selected>
 									Sin Asignar
 								</option>
 								{!loading &&
-									categories.map((category) => (
-										<option
-											key={category.ID}
-											value={category.ID}
-											name={category.ID}
-										>
-											{category.CATEGORY}
+									categories.map(({ _id, nameCategory }) => (
+										<option key={_id} value={_id} name={_id}>
+											{nameCategory}
 										</option>
 									))}
 							</Select>
 						</div>
 						<div>
 							<div className="mb-2 block">
-								<Label htmlFor="status" value="Estatus" />
+								<Label htmlFor="status" value="Estatus *" />
 							</div>
 							<Select
 								id="status"
@@ -209,6 +253,9 @@ export default function ModalForm() {
 								required
 								onChange={(e) => handleChange(e)}
 							>
+								<option value={""} disabled selected>
+									Sin Status
+								</option>
 								{statusFilters.map(
 									(status) =>
 										status.name !== "all" && (
@@ -223,10 +270,26 @@ export default function ModalForm() {
 								)}
 							</Select>
 						</div>
-						<div className="w-full">
-							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>
+						<div>
+							<div className="mb-2 block">
+								<Label
+									htmlFor="daysConfig"
+									value="Número de días a expirar *"
+								/>
+							</div>
+							<TextInput
+								id="daysConfig"
+								name="daysConfig"
+								type="number"
+								min={0}
+								required
+								onChange={(e) => handleChange(e)}
+							/>
 						</div>
-					</div>
+						<div className="w-full">
+							<Button type="submit">Agregar</Button>
+						</div>
+					</form>
 				</Modal.Body>
 			</Modal>
 		</>
