@@ -1,11 +1,4 @@
-import {
-	Button,
-	Label,
-	Modal,
-	Select,
-	TextInput,
-	Textarea,
-} from "flowbite-react";
+import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
 import { useState } from "react";
 import useGlobal from "../../../../hooks/useGlobal";
 import useSocket from "../../../../hooks/useSocket";
@@ -189,7 +182,7 @@ export default function ModalForm() {
 								onChange={(e) => handleChange(e)}
 							/>
 						</div>
-						<div>
+						{/* <div>
 							<div className="mb-2 block">
 								<Label htmlFor="initialComment" value="Comentario Inicial" />
 							</div>
@@ -199,7 +192,7 @@ export default function ModalForm() {
 								type="text"
 								onChange={(e) => handleChange(e)}
 							/>
-						</div>
+						</div> */}
 						<div>
 							<div className="mb-2 block">
 								<Label htmlFor="assignTo" value="Asignar a" />

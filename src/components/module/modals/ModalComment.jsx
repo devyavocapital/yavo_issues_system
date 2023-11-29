@@ -1,8 +1,15 @@
-import { Button, Label, Modal, Select, Textarea } from "flowbite-react";
-import { useState } from "react";
 import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
-import useUser from "../../../../hooks/useUser";
+// import useUser from "../../../../hooks/useUser";
+import {
+	Button,
+	Label,
+	Modal,
+	Select,
+	Spinner,
+	Textarea,
+} from "flowbite-react";
+import { useState } from "react";
 import { fetched, fetchedImages } from "../../../utils/fetched";
 import { getCurrentDay } from "../../../utils/formatDate";
 import { formatName } from "../../../utils/formatName";
@@ -10,7 +17,7 @@ import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
 
 export default function ModalComment({ id, newComment }) {
-	const { user } = useUser();
+	// const { user } = useUser();
 	const { token } = useToken();
 	const { socket } = useSocket();
 	const [openModal, setOpenModal] = useState("");
@@ -18,6 +25,8 @@ export default function ModalComment({ id, newComment }) {
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
 	const [inputFile, setInputFile] = useState({ file: [] });
+	const [userAssignated, setUserAssignated] = useState("");
+	const [loadingSpinner, setLoadingSpinner] = useState(false);
 
 	const getNames = async () => {
 		const response = await fnGetNames(token);
@@ -35,6 +44,11 @@ export default function ModalComment({ id, newComment }) {
 	};
 
 	const handleChange = (e) => {
+		// rome-ignore lint/suspicious/noDoubleEquals: <explanation>
+		if (e.target.name == "assingTo") {
+			const name = e.target.value.split(",");
+			setUserAssignated(formatName({ name: name[1], lastname: name[2] }));
+		}
 		setValues({
 			...values,
 			[e.target.name]: e.target.value,
@@ -43,6 +57,7 @@ export default function ModalComment({ id, newComment }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoadingSpinner(true);
 
 		const formData = new FormData();
 		formData.append("file", inputFile.file);
@@ -53,7 +68,7 @@ export default function ModalComment({ id, newComment }) {
 
 		const dataNotification = {
 			assignTo: data.assignTo,
-			issue: data.idIssue._id,
+			issue: data.idIssue,
 		};
 
 		if (values.assignTo !== undefined) {
@@ -66,11 +81,13 @@ export default function ModalComment({ id, newComment }) {
 		const date = getCurrentDay();
 		newComment({
 			...values,
-			nombreCompleto: `${user.nombre} ${user.apellido_paterno}`,
+			nombreCompleto: userAssignated,
 			created_At: date,
 			description: values.description,
 			fileName: inputFile.file.name,
 		});
+
+		setLoadingSpinner(false);
 	};
 
 	return (
@@ -154,7 +171,11 @@ export default function ModalComment({ id, newComment }) {
 								</option>
 								{!loading &&
 									names.map((name) => (
-										<option key={name._id} value={name._id} name={name._id}>
+										<option
+											key={name._id}
+											value={[name._id, name.name, name.lastname]}
+											name={name._id}
+										>
 											{formatName({ name: name.name, lastname: name.lastname })}
 										</option>
 									))}
@@ -176,8 +197,9 @@ export default function ModalComment({ id, newComment }) {
 								onChange={(e) => handleFile(e)}
 							/>
 						</div>
-						<div className="w-full">
+						<div className="w-full flex">
 							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>
+							{loadingSpinner && <Spinner />}
 						</div>
 					</div>
 				</Modal.Body>
