@@ -10,7 +10,8 @@ import Stats from "./pages/Stats";
 import CreateCategory from "./pages/categories";
 import EditIssue from "./pages/edit/[id]";
 
-const socket = socketIO.connect("http://localhost:4000");
+// const socket = socketIO.connect("http://localhost:4000");
+const socket = socketIO.connect(import.meta.env.VITE_FRONTEND_API_URL);
 
 function App() {
 	const { handleSocket } = useSocket();

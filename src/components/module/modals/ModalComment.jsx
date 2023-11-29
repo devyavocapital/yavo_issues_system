@@ -10,7 +10,6 @@ import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
 
 export default function ModalComment({ id, newComment }) {
-
 	const { user } = useUser();
 	const { token } = useToken();
 	const { socket } = useSocket();
@@ -22,7 +21,6 @@ export default function ModalComment({ id, newComment }) {
 
 	const getNames = async () => {
 		const response = await fnGetNames(token);
-		console.log(response)
 		setNames(response);
 
 		setTimeout(() => {
@@ -31,7 +29,6 @@ export default function ModalComment({ id, newComment }) {
 	};
 
 	const handleFile = (e) => {
-
 		setInputFile({
 			file: e.target.files[0],
 		});
@@ -158,7 +155,7 @@ export default function ModalComment({ id, newComment }) {
 								{!loading &&
 									names.map((name) => (
 										<option key={name._id} value={name._id} name={name._id}>
-											{formatName({name: name.name, lastname: name.lastname})}
+											{formatName({ name: name.name, lastname: name.lastname })}
 										</option>
 									))}
 							</Select>

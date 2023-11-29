@@ -43,16 +43,15 @@ const Login = () => {
 			password: passRef.current.value,
 		};
 		const response = await fetched("", "login", "POST", data);
-		console.log(response);
 		if (response?.error) {
 			setError(response.error);
 			return;
 		}
 
 		setError("");
-		localStorage.setItem("yavo_tickets_session", response.token);
-		handleToken(response.token);
-		navigation("/dashboard");
+		// localStorage.setItem("yavo_tickets_session", response.token);
+		// handleToken(response.token);
+		// navigation("/dashboard");
 	};
 
 	return (

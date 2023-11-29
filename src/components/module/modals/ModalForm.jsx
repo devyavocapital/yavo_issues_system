@@ -50,7 +50,6 @@ export default function ModalForm() {
 		e.preventDefault();
 
 		const data = values;
-		console.log(data)
 		const dataNotification = {
 			userAssignated: data?.assignTo === undefined ? 0 : data.assignTo,
 			nameClient: `${data.nameClient} ${
@@ -212,15 +211,14 @@ export default function ModalForm() {
 								id="assignTo"
 								name="assignTo"
 								onChange={(e) => handleChange(e)}
-								
 							>
-								<option value={0} selected >
+								<option value={0} selected>
 									Sin Asignar
 								</option>
 								{!loading &&
-									names.map(({_id, name, lastname}) => (
-										<option key={_id} value={formatName({name, lastname})}>
-											{formatName({name, lastname})}
+									names.map(({ _id, name, lastname }) => (
+										<option key={_id} value={formatName({ name, lastname })}>
+											{formatName({ name, lastname })}
 										</option>
 									))}
 							</Select>
@@ -233,16 +231,13 @@ export default function ModalForm() {
 								id="category"
 								name="category"
 								onChange={(e) => handleChange(e)}
-								
 							>
-								<option value={""} selected>Sin Asignar</option>
+								<option value={""} selected>
+									Sin Asignar
+								</option>
 								{!loading &&
-									categories.map(({_id, nameCategory}) => (
-										<option
-											key={_id}
-											value={_id}
-											name={_id}
-										>
+									categories.map(({ _id, nameCategory }) => (
+										<option key={_id} value={_id} name={_id}>
 											{nameCategory}
 										</option>
 									))}

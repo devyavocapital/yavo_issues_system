@@ -2,13 +2,11 @@ import { fetched } from "./fetched";
 
 export const fnGetNames = async (token) => {
 	const response = await fetched(token, "names", "GET");
-	console.log(response);
 	return response;
 };
 
 export const fnGetCategories = async (token) => {
 	const response = await fetched(token, "categories", "GET");
-	console.log(response);
 	return response;
 };
 

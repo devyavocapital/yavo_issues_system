@@ -1,9 +1,9 @@
 export const fetched = async (token, endpoint, method, data) => {
 	//VITE_FRONTEND_API_URL
 	const url = import.meta.env.VITE_FRONTEND_API_URL;
-	const version = "/api/v1";
+	const version = "api/v1";
 	const permission = import.meta.env.VITE_BACKEND_PERMISSION;
-
+	console.log(`${url}${version}/${endpoint}`);
 	const completeUrl = `${url}${version}/${endpoint}`;
 
 	const headersInit = new Headers({
@@ -11,7 +11,6 @@ export const fetched = async (token, endpoint, method, data) => {
 		"x-auth-token": permission,
 	});
 	headersInit.append("Content-Type", "application/json");
-	console.log({ token, endpoint, method, data });
 	try {
 		const apiResult = await fetch(completeUrl, {
 			method,
@@ -50,6 +49,5 @@ export const fetchedImages = async (token, endpoint, method, data) => {
 
 export const getCurrentUser = async (token) => {
 	const response = await fetched(token, "login", "GET", {});
-	console.log(response.user);
 	return response.user;
 };
