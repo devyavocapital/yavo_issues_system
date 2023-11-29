@@ -3,7 +3,6 @@ export const fetched = async (token, endpoint, method, data) => {
 	const url = import.meta.env.VITE_FRONTEND_API_URL;
 	const version = "api/v1";
 	const permission = import.meta.env.VITE_BACKEND_PERMISSION;
-	console.log(`${url}${version}/${endpoint}`);
 	const completeUrl = `${url}${version}/${endpoint}`;
 
 	const headersInit = new Headers({

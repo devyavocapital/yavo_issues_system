@@ -49,9 +49,9 @@ const Login = () => {
 		}
 
 		setError("");
-		// localStorage.setItem("yavo_tickets_session", response.token);
-		// handleToken(response.token);
-		// navigation("/dashboard");
+		localStorage.setItem("yavo_tickets_session", response.token);
+		handleToken(response.token);
+		navigation("/dashboard");
 	};
 
 	return (
