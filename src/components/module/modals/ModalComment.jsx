@@ -1,5 +1,10 @@
 import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
+import { fetched, fetchedImages } from "../../../utils/fetched";
+import { getCurrentDay } from "../../../utils/formatDate";
+import { formatName } from "../../../utils/formatName";
+import { fnGetNames } from "../../../utils/getFunctions";
+import { statusFilters } from "../../../utils/statusFilters";
 // import useUser from "../../../../hooks/useUser";
 import {
 	Button,
@@ -10,13 +15,8 @@ import {
 	Textarea,
 } from "flowbite-react";
 import { useState } from "react";
-import { fetched, fetchedImages } from "../../../utils/fetched";
-import { getCurrentDay } from "../../../utils/formatDate";
-import { formatName } from "../../../utils/formatName";
-import { fnGetNames } from "../../../utils/getFunctions";
-import { statusFilters } from "../../../utils/statusFilters";
 
-export default function ModalComment({ id, newComment }) {
+export default function ModalComment({ id, newComment, setChangeStatus }) {
 	// const { user } = useUser();
 	const { token } = useToken();
 	const { socket } = useSocket();
@@ -26,6 +26,7 @@ export default function ModalComment({ id, newComment }) {
 	const [values, setValues] = useState();
 	const [inputFile, setInputFile] = useState({ file: [] });
 	const [userAssignated, setUserAssignated] = useState("");
+	const [assing, setAssing] = useState("");
 	const [loadingSpinner, setLoadingSpinner] = useState(false);
 
 	const getNames = async () => {
@@ -48,6 +49,7 @@ export default function ModalComment({ id, newComment }) {
 		if (e.target.name == "assingTo") {
 			const name = e.target.value.split(",");
 			setUserAssignated(formatName({ name: name[1], lastname: name[2] }));
+			setAssing(name[0]);
 		}
 		setValues({
 			...values,
@@ -64,18 +66,25 @@ export default function ModalComment({ id, newComment }) {
 
 		await fetchedImages(token, "images/uploads", "POST", formData);
 
-		const data = { ...values, idIssue: id._id, fileName: inputFile.file.name };
+		const data = {
+			...values,
+			idIssue: id._id,
+			fileName: inputFile.file.name,
+			assignTo: userAssignated,
+		};
+		console.log(data);
 
 		const dataNotification = {
 			assignTo: data.assignTo,
 			issue: data.idIssue,
 		};
 
-		if (values.assignTo !== undefined) {
+		if (data.assignTo !== undefined) {
 			socket.emit("notification", dataNotification);
 			await fetched(token, "notifications", "POST", dataNotification);
 		}
 		await fetched(token, "comments", "POST", data);
+		setChangeStatus({ status: data.status, assignTo: userAssignated });
 		setOpenModal("");
 
 		const date = getCurrentDay();

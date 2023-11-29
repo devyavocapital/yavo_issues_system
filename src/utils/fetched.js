@@ -18,6 +18,7 @@ export const fetched = async (token, endpoint, method, data) => {
 		});
 
 		const response = await apiResult.json();
+		console.log(response);
 		return response;
 	} catch (error) {
 		console.log(error);
