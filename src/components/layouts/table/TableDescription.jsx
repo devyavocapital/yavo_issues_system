@@ -30,18 +30,20 @@ const TableDescription = ({
 					{""}
 				</span>
 			</span>
-			<p className="text-gray-800 font-bold place-self-center italic text-sm md:text-md lg:text-lg lg:flex hidden">
-				#Crédito: {creditNumber}
-			</p>
+			{creditNumber && (
+				<p className="text-gray-800 font-bold place-self-center italic text-sm md:text-md lg:text-lg lg:flex hidden">
+					#Crédito: {creditNumber}
+				</p>
+			)}
 			<div className="flex">
-				<p className="text-gray-900 place-self-center text-sm md:text-md lg:text-lg">
+				{/* <p className="text-gray-900 place-self-center text-sm md:text-md lg:text-lg">
 					{nameClient}
-					{/* {lastComment && (
+					{lastComment && (
 						<span className="text-gray-500 place-self-center truncate text-sm md:text-md lg:text-lg">
 							: {lastComment}
 						</span>
-					)} */}
-				</p>
+					)}
+				</p> */}
 			</div>
 		</div>
 	);

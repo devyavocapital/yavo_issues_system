@@ -1,3 +1,4 @@
+import { Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import useSocket from "../../../hooks/useSocket";
 import useToken from "../../../hooks/useToken";
@@ -12,6 +13,7 @@ const ModuleNotification = () => {
 	const [notification, setNotification] = useState();
 	const [myOwn, setMyOwn] = useState(false);
 	const [allNotifications, setAllNotifications] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [panel, setPanel] = useState(false);
 
 	useEffect(() => {
@@ -30,8 +32,10 @@ const ModuleNotification = () => {
 	};
 
 	const handleNotification = async () => {
+		setLoading(true);
 		const notifications = await fetched(token, "notifications", "GET");
 		setAllNotifications(notifications);
+		setLoading(false);
 	};
 	return (
 		<div className="grid mx-5">
@@ -70,26 +74,30 @@ const ModuleNotification = () => {
 					</svg>
 				)}
 			</button>
-			{panel && (
-				<div className="w-[400px] h-auto bg-white border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl z-10">
-					{allNotifications.length > 0 ? (
-						allNotifications.map(
-							(n) =>
-								n.active && (
-									<NotificationRow
-										key={n._id}
-										notification={n}
-										setAllNotifications={setAllNotifications}
-										allNotifications={allNotifications}
-									/>
-								),
-						)
-					) : (
-						<div className="w-full p-2">
-							<p>No tiene notificaciones </p>
-						</div>
-					)}
-				</div>
+			{loading ? (
+				<Spinner />
+			) : (
+				panel && (
+					<div className="w-[400px] h-auto bg-white border-slate-400 border-[1px] absolute top-[50px] right-[0px] rounded-xl z-10">
+						{allNotifications.length > 0 ? (
+							allNotifications.map(
+								(n) =>
+									n.active && (
+										<NotificationRow
+											key={n._id}
+											notification={n}
+											setAllNotifications={setAllNotifications}
+											allNotifications={allNotifications}
+										/>
+									),
+							)
+						) : (
+							<div className="w-full p-2">
+								<p>No tiene notificaciones </p>
+							</div>
+						)}
+					</div>
+				)
 			)}
 		</div>
 	);

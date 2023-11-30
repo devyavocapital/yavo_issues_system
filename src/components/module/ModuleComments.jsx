@@ -54,15 +54,17 @@ const ModuleComments = ({
 						Asignado a:{" "}
 						<span className="font-bold text-2xl">{changeStatus.assignTo}</span>
 					</p>
-				) : issueSelected.assignTo === null ||
-				  issueSelected.assignTo === undefined ? (
+				) : issueSelected.nameAssignated === null ||
+				  issueSelected.nameAssignated === undefined ? (
 					<p className="text-white text-center text-xl my-2">
 						No ha sido asignado
 					</p>
 				) : (
 					<p className="text-white text-center text-xl my-2">
 						Asignado a:{" "}
-						<span className="font-bold text-2xl">{issueSelected.assignTo}</span>
+						<span className="font-bold text-2xl">
+							{issueSelected.nameAssignated}
+						</span>
 					</p>
 				)}
 				<ul className="divide-y divide-gray-200 overflow-y-auto h-[700px]">
@@ -78,7 +80,7 @@ const ModuleComments = ({
 										/>
 									</div>
 									<div className="min-w-0 flex-1">
-										<p className=" text-xl font-medium text-gray-900 ">
+										<p className=" text-xl font-medium text-gray-200 ">
 											{!comment.nombreCompleto
 												? formatName({
 														name: comment?.user[0]?.name,
