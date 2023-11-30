@@ -70,11 +70,13 @@ export default function ModalForm() {
 		const response = await fetched(token, "issues", "POST", data);
 
 		handleNewIssue({
-			id: response._id,
+			_id: response.issueAdded._id,
 			creditNumber: values.creditNumber,
 			nameClient: values.nameClient,
 			status: values.status,
-			FULLNAME: `${user.nombre} ${user.apellido_paterno}`,
+			daysConfig: response.issueAdded.daysConfig,
+			created_At: response.issueAdded.created_At,
+			nameAssignated: assignated.name,
 		});
 		setOpenModal("");
 	};

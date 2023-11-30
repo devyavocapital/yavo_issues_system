@@ -28,8 +28,8 @@ const Dashboard = () => {
 		setSortIssues(response);
 	};
 
-	useEffect(() => {
-		getIssues();
+	useEffect(async () => {
+		await getIssues();
 		setLoading(false);
 	}, [search]);
 
@@ -59,13 +59,19 @@ const Dashboard = () => {
 		}
 		if (expired !== null && filter !== "all") {
 			const sorted = issues.filter(
-				(i) => validateExpired({days: i.daysConfig, dateCreated: i.created_At}) === expired && i.status === filter,
+				(i) =>
+					validateExpired({ days: i.daysConfig, dateCreated: i.created_At }) ===
+						expired && i.status === filter,
 			);
 			setSortIssues(sorted);
 			return;
 		}
 		if (expired !== null) {
-			const sorted = issues.filter((i) => validateExpired({days: i.daysConfig, dateCreated: i.created_At}) === expired);
+			const sorted = issues.filter(
+				(i) =>
+					validateExpired({ days: i.daysConfig, dateCreated: i.created_At }) ===
+					expired,
+			);
 			setSortIssues(sorted);
 			return;
 		}
@@ -76,6 +82,7 @@ const Dashboard = () => {
 	}, [expired]);
 
 	const handleComments = async (issue) => {
+		console.log(issue);
 		issue._id !== 0 && issue._id !== undefined
 			? setComments(await fnGetComments(token, issue._id))
 			: setComments([]);
