@@ -1,4 +1,4 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { redirect, useNavigate } from "react-router-dom";
 import useToken from "../../hooks/useToken";
@@ -8,6 +8,7 @@ const Login = () => {
 	const emailRef = useRef();
 	const passRef = useRef();
 	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 	const navigation = useNavigate();
 	const { token, handleToken } = useToken();
 
@@ -29,12 +30,15 @@ const Login = () => {
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 		if (emailRef.current.value === "") {
 			setError("El email es obligatorio");
+			setLoading(true);
 			return null;
 		}
 		if (passRef.current.value === "") {
 			setError("El password es obligatorio");
+			setLoading(true);
 			return null;
 		}
 
@@ -52,6 +56,7 @@ const Login = () => {
 		setError("");
 		localStorage.setItem("yavo_tickets_session", response.token);
 		handleToken(response.token);
+		setLoading(true);
 		navigation("/dashboard");
 	};
 
@@ -79,7 +84,7 @@ const Login = () => {
 					<TextInput id="password1" required type="password" ref={passRef} />
 				</div>
 				<Button type="submit" className="uppercase">
-					Iniciar sesión
+					{loading ? <Spinner /> : "Iniciar sesión"}
 				</Button>
 			</form>
 		</div>

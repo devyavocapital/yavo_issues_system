@@ -1,4 +1,11 @@
-import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
+import {
+	Button,
+	Label,
+	Modal,
+	Select,
+	Spinner,
+	TextInput,
+} from "flowbite-react";
 import { useState } from "react";
 import useGlobal from "../../../../hooks/useGlobal";
 import useSocket from "../../../../hooks/useSocket";
@@ -17,6 +24,7 @@ export default function ModalForm() {
 	const [names, setNames] = useState();
 	const [categories, setCategories] = useState();
 	const [loading, setLoading] = useState(true);
+	const [posting, setPosting] = useState(false);
 	const [values, setValues] = useState();
 	const [assignated, setAssignated] = useState({});
 	const { handleNewIssue } = useGlobal();
@@ -47,6 +55,7 @@ export default function ModalForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setPosting(true);
 
 		const data = {
 			...values,
@@ -68,6 +77,7 @@ export default function ModalForm() {
 		socket.emit("notification", dataNotification);
 		await fetched(token, "notifications", "POST", dataNotification);
 		const response = await fetched(token, "issues", "POST", data);
+		setPosting(false);
 
 		handleNewIssue({
 			_id: response.issueAdded._id,
@@ -294,7 +304,7 @@ export default function ModalForm() {
 							/>
 						</div>
 						<div className="w-full">
-							<Button type="submit">Agregar</Button>
+							<Button type="submit">{posting ? <Spinner /> : "Agregar"}</Button>
 						</div>
 					</form>
 				</Modal.Body>
