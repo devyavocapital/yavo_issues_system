@@ -1,8 +1,8 @@
+import React, { useState } from "react";
 import { dateFormated } from "../../utils/formatDate";
 import { formatName } from "../../utils/formatName";
 import { esStatus } from "../../utils/statusFilters";
 import ModalComment from "./modals/ModalComment";
-import React, { useState } from "react";
 
 const ModuleComments = ({
 	comments,
@@ -99,7 +99,7 @@ const ModuleComments = ({
 												alt="evidencia de comentario"
 												src={`${
 													import.meta.env.VITE_FRONTEND_API_URL_IMG
-												}	images/uploads/${comment.fileName}`}
+												}images/uploads/${comment.fileName}`}
 												className="w-6/12 rounded-lg"
 											/>
 										) : null}
