@@ -36,7 +36,7 @@ export const fetchedImages = async (token, endpoint, method, data) => {
 	});
 
 	try {
-		const apiResult = await fetch(`${api}/${endpoint}`, {
+		const apiResult = await fetch(`${api}${endpoint}`, {
 			method,
 			headers: headersInit,
 			body: data,

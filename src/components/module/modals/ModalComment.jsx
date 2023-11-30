@@ -1,7 +1,7 @@
 import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
 import useUser from "../../../../hooks/useUser";
-import { fetchedImages } from "../../../utils/fetched";
+import { fetched, fetchedImages } from "../../../utils/fetched";
 import { formatName } from "../../../utils/formatName";
 import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
@@ -67,7 +67,13 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 		const formData = new FormData();
 		formData.append("file", inputFile.file);
 
-		await fetchedImages(token, "images/uploads", "POST", formData);
+		const images = await fetchedImages(
+			token,
+			"images/uploads",
+			"POST",
+			formData,
+		);
+		console.log(images);
 
 		const data = {
 			...values,
@@ -78,6 +84,7 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 		};
 
 		const dataNotification = {
+			nameClient: id.nameClient,
 			assignTo: data.assignTo,
 			issue: data.idIssue,
 		};
@@ -99,7 +106,7 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 			created_At: ms,
 			description: values.description,
 			nameAssignated,
-			fileName: inputFile.file.name,
+			fileName: !inputFile.file.name ? null : inputFile.file.name,
 		});
 
 		setLoadingSpinner(false);
@@ -218,8 +225,9 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 							/>
 						</div>
 						<div className="w-full flex">
-							<Button onClick={(e) => handleSubmit(e)}>Agregar</Button>
-							{loadingSpinner && <Spinner />}
+							<Button onClick={(e) => handleSubmit(e)}>
+								{loadingSpinner ? <Spinner /> : "Agregar"}
+							</Button>
 						</div>
 					</div>
 				</Modal.Body>

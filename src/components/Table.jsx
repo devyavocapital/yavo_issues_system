@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import useUser from "../../hooks/useUser";
 import { esStatus } from "../utils/statusFilters";
 import { validateExpired } from "../utils/validateExpired";
-import Spinner from "./common/Spinner";
 import TableAvatar from "./layouts/table/TableAvatar";
 import TableDescription from "./layouts/table/TableDescription";
 import ModuleComments from "./module/ModuleComments";
@@ -23,16 +22,18 @@ const Table = ({
 
 	return (
 		<div className="w-full lg:w-11/12 mx-auto border">
-			{loading ? (
-				<div className="h-screen grid w-12/12 place-items-center">
-					<Spinner aria-label="Extra large spinner example" size="xl" />
-				</div>
-			) : (
+			{
+				// loading ? (
+				// 	<div className="h-screen grid w-12/12 place-items-center">
+				// 		<Spinner aria-label="Extra large spinner example" size="xl" />
+				// 	</div>
+				// ) : (
 				issues?.map((issue) => (
 					<Fragment key={issue.nameClient}>
 						<Card>
 							<div className="grid grid-cols-[20%_65%_15%] items-center">
 								<TableAvatar name={issue.nameClient} />
+								{console.log(issue)}
 								<TableDescription
 									creditNumber={issue.creditNumber}
 									nameClient={
@@ -62,7 +63,7 @@ const Table = ({
 
 								<div className="flex space-x-3 justify-end">
 									{user.category === 1 && (
-										<Link to={`/dashboard/edit/${issue.id}`}>
+										<Link to={`/dashboard/edit/${issue._id}`}>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												className="icon icon-tabler icon-tabler-edit"
@@ -95,7 +96,8 @@ const Table = ({
 						</Card>
 					</Fragment>
 				))
-			)}
+				// )
+			}
 			{showComments && (
 				<ModuleComments
 					comments={comments}

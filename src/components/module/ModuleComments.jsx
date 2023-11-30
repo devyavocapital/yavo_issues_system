@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import { dateFormated } from "../../utils/formatDate";
 import { formatName } from "../../utils/formatName";
 import { esStatus } from "../../utils/statusFilters";
 import ModalComment from "./modals/ModalComment";
+import React, { useState } from "react";
 
 const ModuleComments = ({
 	comments,
@@ -11,6 +11,7 @@ const ModuleComments = ({
 	newComment,
 }) => {
 	const [changeStatus, setChangeStatus] = useState(null);
+	console.log(issueSelected);
 
 	return (
 		<div className="fixed z-20 right-0 top-0 w-full h-screen bg-slate-800  bg-opacity-80">
@@ -93,14 +94,12 @@ const ModuleComments = ({
 												Creado: {dateFormated(comment.created_At)}
 											</span>
 										</p>
-										{comment.fileName !== "null" &&
-										comment.fileName !== "undefined" &&
-										comment.fileName !== "NULL" ? (
+										{comment.fileName !== null ? (
 											<img
 												alt="evidencia de comentario"
 												src={`${
 													import.meta.env.VITE_FRONTEND_API_URL_IMG
-												}/images/uploads/${comment.fileName}`}
+												}	images/uploads/${comment.fileName}`}
 												className="w-6/12 rounded-lg"
 											/>
 										) : null}
