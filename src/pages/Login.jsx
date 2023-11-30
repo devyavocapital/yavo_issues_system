@@ -1,6 +1,6 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import useToken from "../../hooks/useToken";
 import { fetched, getCurrentUser } from "../utils/fetched";
 
@@ -19,9 +19,10 @@ const Login = () => {
 
 			const user = await getCurrentUser(token);
 			if (!user) {
+				localStorage.removeItem("yavo_tickets_session");
 				return;
 			}
-			navigation("/dashboard");
+			redirect("/dashboard");
 		};
 		isLogged();
 	}, []);

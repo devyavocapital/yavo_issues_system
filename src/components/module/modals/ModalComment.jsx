@@ -1,7 +1,7 @@
 import useSocket from "../../../../hooks/useSocket";
 import useToken from "../../../../hooks/useToken";
-import { fetched, fetchedImages } from "../../../utils/fetched";
-import { getCurrentDay } from "../../../utils/formatDate";
+import useUser from "../../../../hooks/useUser";
+import { fetchedImages } from "../../../utils/fetched";
 import { formatName } from "../../../utils/formatName";
 import { fnGetNames } from "../../../utils/getFunctions";
 import { statusFilters } from "../../../utils/statusFilters";
@@ -17,19 +17,22 @@ import {
 import { useState } from "react";
 
 export default function ModalComment({ id, newComment, setChangeStatus }) {
-	// const { user } = useUser();
+	const { user } = useUser();
 	const { token } = useToken();
 	const { socket } = useSocket();
 	const [openModal, setOpenModal] = useState("");
-	const [names, setNames] = useState();
+	const [names, setNames] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
 	const [inputFile, setInputFile] = useState({ file: [] });
 	const [userAssignated, setUserAssignated] = useState("");
-	const [assing, setAssing] = useState("");
+	const [nameAssignated, setNameAssignated] = useState("");
 	const [loadingSpinner, setLoadingSpinner] = useState(false);
 
 	const getNames = async () => {
+		if (user.category !== 1) {
+			return;
+		}
 		const response = await fnGetNames(token);
 		setNames(response);
 
@@ -46,10 +49,10 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 
 	const handleChange = (e) => {
 		// rome-ignore lint/suspicious/noDoubleEquals: <explanation>
-		if (e.target.name == "assingTo") {
+		if (e.target.name == "assignTo") {
 			const name = e.target.value.split(",");
-			setUserAssignated(formatName({ name: name[1], lastname: name[2] }));
-			setAssing(name[0]);
+			setNameAssignated(formatName({ name: name[1], lastname: name[2] }));
+			setUserAssignated(name[0]);
 		}
 		setValues({
 			...values,
@@ -71,8 +74,8 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 			idIssue: id._id,
 			fileName: inputFile.file.name,
 			assignTo: userAssignated,
+			nameAssignated,
 		};
-		console.log(data);
 
 		const dataNotification = {
 			assignTo: data.assignTo,
@@ -84,15 +87,18 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 			await fetched(token, "notifications", "POST", dataNotification);
 		}
 		await fetched(token, "comments", "POST", data);
-		setChangeStatus({ status: data.status, assignTo: userAssignated });
+		setChangeStatus({ status: data.status, assignTo: nameAssignated });
 		setOpenModal("");
 
-		const date = getCurrentDay();
+		const date = new Date();
+		const ms = date.getTime();
+
 		newComment({
 			...values,
-			nombreCompleto: userAssignated,
-			created_At: date,
+			nombreCompleto: nameAssignated,
+			created_At: ms,
 			description: values.description,
+			nameAssignated,
 			fileName: inputFile.file.name,
 		});
 
@@ -161,35 +167,40 @@ export default function ModalComment({ id, newComment, setChangeStatus }) {
 								)}
 							</Select>
 						</div>
-						<div className="max-w-lg flex" id="select">
-							<div className="my-auto">
-								<Label
-									htmlFor="assingTo"
-									value="Reasignar a: "
-									className="text-xl mr-2"
-								/>
+						{user.category === 1 && (
+							<div className="max-w-lg flex" id="select">
+								<div className="my-auto">
+									<Label
+										htmlFor="assignTo"
+										value="Reasignar a: "
+										className="text-xl mr-2"
+									/>
+								</div>
+								<Select
+									id="assignTo"
+									name="assignTo"
+									required
+									onChange={(e) => handleChange(e)}
+								>
+									<option value={0} name={0} selected>
+										Sin Asignar
+									</option>
+									{!loading &&
+										names.map((name) => (
+											<option
+												key={name._id}
+												value={[name._id, name.name, name.lastname]}
+												name={name._id}
+											>
+												{formatName({
+													name: name.name,
+													lastname: name.lastname,
+												})}
+											</option>
+										))}
+								</Select>
 							</div>
-							<Select
-								id="assingTo"
-								name="assingTo"
-								required
-								onChange={(e) => handleChange(e)}
-							>
-								<option value={0} name={0} selected>
-									Sin Asignar
-								</option>
-								{!loading &&
-									names.map((name) => (
-										<option
-											key={name._id}
-											value={[name._id, name.name, name.lastname]}
-											name={name._id}
-										>
-											{formatName({ name: name.name, lastname: name.lastname })}
-										</option>
-									))}
-							</Select>
-						</div>
+						)}
 						<div className="max-w-lg grid" id="select">
 							<div className="my-auto">
 								<Label

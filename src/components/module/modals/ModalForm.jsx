@@ -18,7 +18,7 @@ export default function ModalForm() {
 	const [categories, setCategories] = useState();
 	const [loading, setLoading] = useState(true);
 	const [values, setValues] = useState();
-	const [zodError, setZodError] = useState(null);
+	const [assignated, setAssignated] = useState({});
 	const { handleNewIssue } = useGlobal();
 
 	const getNames = async () => {
@@ -33,6 +33,12 @@ export default function ModalForm() {
 	};
 
 	const handleChange = (e) => {
+		// rome-ignore lint/suspicious/noDoubleEquals: <explanation>
+		if (e.target.name == "assignTo") {
+			const dataAssignated = e.target.value;
+			const user = dataAssignated.split(",");
+			setAssignated({ name: user[0], id: user[1] });
+		}
 		setValues({
 			...values,
 			[e.target.name]: e.target.value,
@@ -42,14 +48,20 @@ export default function ModalForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const data = values;
+		const data = {
+			...values,
+			assignTo: assignated.id,
+			nameAssignated: assignated.name,
+		};
+		const client = `${data.nameClient} ${
+			data.lastnameClient === undefined ? "" : data.lastnameClient
+		} ${
+			data.motherLastnameClient === undefined ? "" : data.motherLastnameClient
+		}`;
+
 		const dataNotification = {
-			userAssignated: data?.assignTo === undefined ? 0 : data.assignTo,
-			nameClient: `${data.nameClient} ${
-				data.lastnameClient === undefined ? "" : data.lastnameClient
-			} ${
-				data.motherLastnameClient === undefined ? "" : data.motherLastnameClient
-			}`,
+			assignTo: data?.assignTo === undefined ? 0 : data.assignTo,
+			nameClient: client.trim(),
 			category: data.category,
 		};
 
@@ -207,7 +219,10 @@ export default function ModalForm() {
 								</option>
 								{!loading &&
 									names.map(({ _id, name, lastname }) => (
-										<option key={_id} value={formatName({ name, lastname })}>
+										<option
+											key={_id}
+											value={[formatName({ name, lastname }), _id]}
+										>
 											{formatName({ name, lastname })}
 										</option>
 									))}
