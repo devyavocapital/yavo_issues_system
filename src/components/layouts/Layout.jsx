@@ -14,7 +14,6 @@ const Layout = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log(user)
     const token = localStorage.getItem('yavo_tickets_session')
     if (!token) {
       navigate('/')

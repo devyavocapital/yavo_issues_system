@@ -19,11 +19,19 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const [issueSelected, setIssueSelected] = useState({})
   const [showComments, setShowComments] = useState(false)
+  const [error, setError] = useState(null)
 
   const getIssues = async () => {
     const valueSearching =
       searchingRef.current.value === '' ? 'null' : searchingRef.current.value
     const response = await fnGetIssues(token, valueSearching, null)
+    if (response.error) {
+      setError(response.error)
+      setIssues([])
+      setSortIssues([])
+      return
+    }
+
     setIssues(response)
     setSortIssues(response)
   }
