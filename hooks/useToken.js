@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import TokenContext from "../contexts/token/TokenContext";
+import { useContext } from 'react'
+import TokenContext from '../contexts/token/TokenContext'
 
 const useToken = () => {
-	return useContext(TokenContext);
-};
+  return useContext(TokenContext)
+}
 
-export default useToken;
+export default useToken
