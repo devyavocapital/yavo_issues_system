@@ -38,7 +38,7 @@ const ModuleComments = ({
             </svg>
           </button>
           <h2 className='text-white text-center text-3xl lg:text-5xl my-2'>
-            {issueSelected.nameClient}
+            {formatName({ name: issueSelected.task, lastname: '' })}
           </h2>
           <p className='font-bold italic text-xl text-center my-0 py-0'>
             {changeStatus !== null ? esStatus(changeStatus.status) : esStatus(issueSelected.status)}
