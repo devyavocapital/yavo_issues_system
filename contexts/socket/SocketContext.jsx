@@ -1,20 +1,20 @@
-import { createContext, useState } from "react";
+import { createContext, useState } from 'react'
 
-const SocketContext = createContext(null);
+const SocketContext = createContext(null)
 
 const SocketProvider = ({ children }) => {
-	const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(null)
 
-	const handleSocket = (value) => {
-		setSocket(value);
-	};
+  const handleSocket = (value) => {
+    setSocket(value)
+  }
 
-	return (
-		<SocketContext.Provider value={{ socket, handleSocket }}>
-			{children}
-		</SocketContext.Provider>
-	);
-};
+  return (
+    <SocketContext.Provider value={{ socket, handleSocket }}>
+      {children}
+    </SocketContext.Provider>
+  )
+}
 
-export { SocketProvider };
-export default SocketContext;
+export { SocketProvider }
+export default SocketContext
