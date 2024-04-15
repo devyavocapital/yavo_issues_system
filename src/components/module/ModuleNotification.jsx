@@ -32,6 +32,7 @@ const ModuleNotification = () => {
   const handleNotification = async () => {
     setLoading(true)
     const notifications = await fetched(token, 'notifications', 'GET')
+
     setAllNotifications(notifications)
     setLoading(false)
   }

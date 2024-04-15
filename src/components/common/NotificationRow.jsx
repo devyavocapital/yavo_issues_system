@@ -9,6 +9,7 @@ const NotificationRow = ({
   allNotifications,
   setAllNotifications
 }) => {
+  console.log(notification)
   return loading
     ? (
       <div
@@ -22,7 +23,7 @@ const NotificationRow = ({
     : (
       <div
         key={notification._id}
-        className='flex justify-between my-2 px-2 border-b-[1px] border-slate-300 last:border-none'
+        className={`flex justify-between my-2 px-2 border-b-[1px] ${!notification.readed && 'bg-slate-500/40'} border-slate-300 last:border-none`}
       >
         <div className='grid'>
           <p className='text-xl'>{notification.task}</p>

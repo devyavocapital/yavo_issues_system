@@ -11,7 +11,6 @@ const ModuleComments = ({
   newComment
 }) => {
   const [changeStatus, setChangeStatus] = useState(null)
-  console.log(issueSelected)
 
   return (
     <div className='fixed z-20 right-0 top-0 w-full h-screen bg-slate-800 bg-opacity-80'>

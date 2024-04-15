@@ -5,8 +5,8 @@ const IconDelete = ({ id, allNotifications, setAllNotifications }) => {
   const { token } = useToken()
 
   const handleDelete = async () => {
-    const readed = null
-    const active = 0
+    const readed = 0
+    const active = false
     const data = { id, readed, active }
 
     await fetched(token, 'notifications', 'PUT', data)

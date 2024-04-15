@@ -2,7 +2,6 @@ import { fetched } from './fetched'
 
 export const fnGetNames = async (token) => {
   const response = await fetched(token, 'names', 'GET')
-  console.log(response)
   return response
 }
 
