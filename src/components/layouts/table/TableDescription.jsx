@@ -15,7 +15,6 @@ const TableDescription = ({
   const [newStatusBD, setNewStatusBD] = useState('')
 
   const handleStatus = async ({ id, newStatus }) => {
-    console.log({ id, newStatus })
     const data = { id, status: newStatus }
     try {
       await fetched(token, 'issues', 'PATCH', data)
