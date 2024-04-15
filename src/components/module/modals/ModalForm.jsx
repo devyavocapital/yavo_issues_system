@@ -65,14 +65,10 @@ export default function ModalForm () {
       assignTo: assignated.id,
       nameAssignated: assignated.name
     }
-    const client = `${data.nameClient} ${data.lastnameClient === undefined ? '' : data.lastnameClient
-      } ${data.motherLastnameClient === undefined ? '' : data.motherLastnameClient
-      }`
 
     const dataNotification = {
       task: data.task,
       assignTo: data?.assignTo === undefined ? 0 : data.assignTo,
-      nameClient: client.trim(),
       category: data.category
     }
 
@@ -116,7 +112,7 @@ export default function ModalForm () {
           stroke='currentColor'
           className='w-5 h-5 mr-2'
         >
-          <title>Close modal</title>
+          <title>add task</title>
           <path
             strokeLinecap='round'
             strokeLinejoin='round'

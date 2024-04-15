@@ -28,12 +28,12 @@ const Notification = () => {
         setShow(false)
         setNotification()
         setNotifications([])
-      }, 5000)
+      }, 10000)
   }, [show])
 
   return (
     show && (
-      <div className='absolute z-30 top-[100px] left-[0px] mb-5'>
+      <div className='absolute z-30 top-[150px] left-[0px] mb-5'>
         {notifications.length > 0 &&
           notifications.map((n) => (
             <Toast key={n.nameClient}>
