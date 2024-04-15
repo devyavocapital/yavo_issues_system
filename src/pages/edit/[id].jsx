@@ -27,7 +27,6 @@ export default function EditIssue () {
   useEffect(() => {
     const getData = async () => {
       try {
-        console.log(await fnGetNames(token))
         setNames(await fnGetNames(token))
         setCategories(await fnGetCategories(token))
 
