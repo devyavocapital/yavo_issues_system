@@ -87,7 +87,7 @@ export default function ModalComment ({ id, newComment, setChangeStatus }) {
     }
 
     const dataNotification = {
-      nameClient: id.nameClient,
+      taks: data.taks,
       assignTo: data.assignTo,
       issue: data.idIssue
     }

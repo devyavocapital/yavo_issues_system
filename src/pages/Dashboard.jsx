@@ -48,7 +48,6 @@ const Dashboard = () => {
   // Order with de navbar menu
   useEffect(() => {
     if (Object.keys(newIssue).length > 0) {
-      console.log([newIssue, ...issues])
       setSortIssues([newIssue, ...issues])
       return
     }
