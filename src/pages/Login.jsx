@@ -74,9 +74,10 @@ const Login = () => {
     // && <main className='h-screen w-full grid mx-auto my-auto'>
     //   <Spinner />
     // </main>
-    ? <main className='h-screen w-full grid mx-auto my-auto'>
-      <Spinner />
-    </main>
+    ? (
+      <main className='h-screen w-full grid mx-auto my-auto'>
+        <Spinner />
+      </main>)
     : (
       <div className='h-screen grid place-content-center '>
         <form className='flex w-[500px] flex-col gap-4' onSubmit={handleLogin}>

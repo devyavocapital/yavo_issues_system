@@ -21,7 +21,7 @@ const Table = ({
   return (
     <div className='w-full lg:w-11/12 mx-auto border'>
       {
-        issues?.map((issue) => (
+        issues.map((issue) => (
           <Fragment key={issue._id}>
             <Card>
               <div className='grid grid-cols-[20%_65%_15%] items-center'>
