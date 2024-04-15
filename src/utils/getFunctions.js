@@ -18,8 +18,8 @@ export const fnGetIssues = async (token, nameClient, id) => {
   return response
 }
 
-export const fnGetComments = async (token, id_issue) => {
-  const response = await fetched(token, `comments?idIssue=${id_issue}`, 'GET')
+export const fnGetComments = async (token, idIssue) => {
+  const response = await fetched(token, `comments?idIssue=${idIssue}`, 'GET')
   return response
 }
 

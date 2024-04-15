@@ -1,4 +1,4 @@
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, Label, Spinner, TextInput } from 'flowbite-react'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetched } from '../../utils/fetched'
@@ -7,24 +7,30 @@ const CreateCategory = () => {
   const catRef = useRef()
   const [error, setError] = useState(null)
   const [msg, setMsg] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
 
   const handleCreateCategory = async (e) => {
-    e.preventDefault()
-    const data = { nameCategory: catRef.current.value }
-    const token = localStorage.getItem('yavo_tickets_session')
+    setLoading(true)
+    try {
+      e.preventDefault()
+      const data = { nameCategory: catRef.current.value }
+      const token = localStorage.getItem('yavo_tickets_session')
 
-    const response = await fetched(token, 'categories', 'POST', data)
-    if (response?.error) {
-      setError(response.error)
-      return
-    }
+      const response = await fetched(token, 'categories', 'POST', data)
+      if (response?.error) {
+        setError(response.error)
+        return
+      }
 
-    setMsg(response.msg)
-    setTimeout(() => {
+      setMsg(response.msg)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
       navigate('/dashboard')
-    }, 1000)
+    }
   }
 
   return (
@@ -50,7 +56,7 @@ const CreateCategory = () => {
         </div>
 
         <Button type='submit' className='uppercase'>
-          Crear Categoría
+          {loading ? <Spinner /> : 'Crear Categoría'}
         </Button>
       </form>
     </div>
