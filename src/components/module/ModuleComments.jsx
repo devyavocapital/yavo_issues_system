@@ -73,7 +73,7 @@ const ModuleComments = ({
         <ul className='divide-y divide-gray-200 overflow-y-auto h-[700px]'>
           {comments?.map((comment) => {
             return (
-              <li className='py-3 sm:py-4 px-5 mx-2 mb-2' key={comment._id}>
+              <li className='py-3 sm:py-4 px-5 mx-2 mb-2' key={comment.description}>
                 <div className='flex items-center space-x-4'>
                   <div className='shrink-0'>
                     <img
@@ -96,7 +96,7 @@ const ModuleComments = ({
                         Creado: {dateFormated(comment.created_At)}
                       </span>
                     </p>
-                    {comment.fileName !== null
+                    {/* {comment.fileName !== null
                       ? (
                         <img
                           alt='evidencia de comentario'
@@ -105,7 +105,7 @@ const ModuleComments = ({
                           className='w-6/12 rounded-lg'
                         />
                         )
-                      : null}
+                      : null} */}
                   </div>
                 </div>
               </li>
