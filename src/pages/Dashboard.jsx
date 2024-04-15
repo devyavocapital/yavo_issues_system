@@ -48,6 +48,7 @@ const Dashboard = () => {
   // Order with de navbar menu
   useEffect(() => {
     if (Object.keys(newIssue).length > 0) {
+      console.log([newIssue, ...issues])
       setSortIssues([newIssue, ...issues])
       return
     }
@@ -111,6 +112,7 @@ const Dashboard = () => {
 
       <section className='w-full mt-10 mx-auto'>
         <TabFilterExpired />
+        {error && <p>Error al descargar información</p>}
         <Table
           loading={loading}
           issues={sortIssues}

@@ -9,7 +9,7 @@ const IconDelete = ({ id, allNotifications, setAllNotifications }) => {
     const active = false
     const data = { id, readed, active }
 
-    await fetched(token, 'notifications', 'PUT', data)
+    await fetched(token, 'notifications', 'PATCH', data)
     setAllNotifications(allNotifications.filter((n) => n.id !== id && id))
   }
 

@@ -62,13 +62,13 @@ export default function ModalForm () {
 
     const data = {
       ...values,
-      assignTo: assignated.id,
+      assignTo: assignated.id === undefined ? user._id : assignated.id,
       nameAssignated: assignated.name
     }
 
     const dataNotification = {
       task: data.task,
-      assignTo: data?.assignTo === undefined ? 0 : data.assignTo,
+      assignTo: data?.assignTo === undefined ? user._id : data.assignTo,
       category: data.category
     }
 
