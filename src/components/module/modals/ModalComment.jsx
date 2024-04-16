@@ -122,7 +122,7 @@ export default function ModalComment ({ id, newComment, setChangeStatus }) {
   return (
     <>
       <Button
-        className='bg-white text-black '
+        className='bg-white text-black'
         onClick={() => {
           getNames()
           setOpenModal('form-elements')
@@ -135,6 +135,7 @@ export default function ModalComment ({ id, newComment, setChangeStatus }) {
         size='md'
         popup
         onClose={() => setOpenModal(undefined)}
+        className='animate-fade-down animate-once animate-duration-500 animate-ease-in'
       >
         <Modal.Header />
         <Modal.Body>

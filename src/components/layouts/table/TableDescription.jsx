@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import useToken from '../../../../hooks/useToken'
+import useUser from '../../../../hooks/useUser'
 import { fetched } from '../../../utils/fetched'
 import { esStatus } from '../../../utils/statusFilters'
 
@@ -8,9 +9,11 @@ const TableDescription = ({
   creditNumber,
   nameAssignated,
   expired,
-  issueId
+  issueId,
+  issueCreator
 }) => {
   const { token } = useToken()
+  const { user } = useUser()
   const [isSelectable, setIsSelectable] = useState(false)
   const [newStatusBD, setNewStatusBD] = useState('')
 
@@ -45,7 +48,7 @@ const TableDescription = ({
               ${expired === null && 'bg-slate-100'}`}
           />
         </span>
-        {isSelectable && (
+        {((user.category === 1 || issueCreator === user._id) && isSelectable) && (
           <ul className='w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg absolute z-40'>
             <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'pendient' })}>Pendiente</li>
             <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'finished' })}>Finalizado</li>

@@ -14,7 +14,7 @@ const ModuleComments = ({
 
   return (
     <div className='fixed z-20 right-0 top-0 w-full h-screen bg-slate-800 bg-opacity-80'>
-      <div className='fixed w-3/4 lg:w-1/2 bg-cyan-700 right-0 h-screen opacity-100 bg-opacity-100 flex justify-between flex-col'>
+      <div className='fixed w-3/4 lg:w-1/2 bg-cyan-700 right-0 h-screen opacity-100 bg-opacity-100 flex justify-between flex-col animate-fade-left animate-once animate-ease-out'>
         <div>
           <button
             type='button'

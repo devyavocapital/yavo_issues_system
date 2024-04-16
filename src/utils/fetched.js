@@ -10,7 +10,7 @@ export const fetched = async (token, endpoint, method, data) => {
     'x-auth-token': permission
   })
   headersInit.append('Content-Type', 'application/json')
-  console.log(data)
+
   try {
     const apiResult = await fetch(completeUrl, {
       method,
@@ -49,6 +49,7 @@ export const fetchedImages = async (token, endpoint, method, data) => {
 }
 
 export const getCurrentUser = async (token) => {
+  if (token === undefined || token === null) return
   const response = await fetched(token, 'login', 'GET', {})
   return response.user
 }

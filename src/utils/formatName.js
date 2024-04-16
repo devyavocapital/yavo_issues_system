@@ -13,9 +13,6 @@ export const formatName = ({ name = '', lastname = '' }) => {
   const n = name.slice(0, 1).toUpperCase()
   const l = lastname.slice(0, 1).toUpperCase()
 
-  const fullName = `${n}${name.slice(1, name.length)} ${l}${lastname.slice(
-		1,
-		lastname.length
-	)}`
+  const fullName = `${n}${name.slice(1, name.length)} ${l}${lastname.slice(1, lastname.length)}`
   return fullName
 }

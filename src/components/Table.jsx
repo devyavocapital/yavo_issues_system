@@ -35,6 +35,7 @@ const Table = ({
                     dateCreated: issue.created_At
                   })}
                   issueId={issue._id}
+                  issueCreator={issue.userId}
                 />
 
                 <div className='flex space-x-3 justify-end'>
