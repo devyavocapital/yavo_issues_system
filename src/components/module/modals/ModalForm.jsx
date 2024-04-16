@@ -126,6 +126,7 @@ export default function ModalForm () {
         size='md'
         popup
         onClose={() => setOpenModal(undefined)}
+        className='animate-fade-down animate-once animate-duration-500 animate-ease-in'
       >
         <Modal.Header />
         <Modal.Body>

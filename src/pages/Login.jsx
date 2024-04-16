@@ -18,7 +18,7 @@ const Login = () => {
       try {
         const localToken = localStorage.getItem('yavo_tickets_session')
         if (!localToken) {
-          return null
+          return
         }
 
         handleToken(localToken)
@@ -26,7 +26,7 @@ const Login = () => {
         const user = await getCurrentUser(localToken)
         if (!user) {
           localStorage.removeItem('yavo_tickets_session')
-          return null
+          return
         }
         navigation('/dashboard')
       } catch (error) {
