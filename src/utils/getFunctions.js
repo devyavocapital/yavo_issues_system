@@ -10,9 +10,9 @@ export const fnGetCategories = async (token) => {
   return response
 }
 
-export const fnGetIssues = async (token, nameClient, id) => {
+export const fnGetIssues = async (token, task, id) => {
   const response = await fetched(
-    token, `issues?nameClient=${nameClient}&id=${id}`, 'GET'
+    token, `issues?task=${task}&id=${id}`, 'GET'
   )
   return response
 }
