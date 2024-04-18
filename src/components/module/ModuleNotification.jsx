@@ -12,6 +12,7 @@ const ModuleNotification = () => {
   const [notification, setNotification] = useState()
   const [myOwn, setMyOwn] = useState(false)
   const [allNotifications, setAllNotifications] = useState([])
+  const [toDelete, setToDelete] = useState({})
   const [loading, setLoading] = useState(false)
   const [panel, setPanel] = useState(false)
 
@@ -23,6 +24,10 @@ const ModuleNotification = () => {
     if (notification !== undefined && notification.assignTo === user._id) { setMyOwn(true) }
     if (notification === undefined) setMyOwn(false)
   }, [notification])
+
+  useEffect(() => {
+    setAllNotifications(allNotifications.filter(n => n._id !== toDelete && n))
+  }, [toDelete])
 
   const showPanel = () => {
     setPanel(!panel)
@@ -36,6 +41,7 @@ const ModuleNotification = () => {
     setAllNotifications(notifications)
     setLoading(false)
   }
+
   return (
     <div className='grid mx-5'>
       <button type='button' onClick={showPanel}>
@@ -96,6 +102,7 @@ const ModuleNotification = () => {
                               notification={n}
                               setAllNotifications={setAllNotifications}
                               allNotifications={allNotifications}
+                              setToDelete={setToDelete}
                             />
                           )
                       )

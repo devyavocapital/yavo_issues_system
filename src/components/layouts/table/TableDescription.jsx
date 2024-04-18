@@ -35,7 +35,7 @@ const TableDescription = ({
           className={`relative rounded-xl p-2 text-sm md:text-md lg:text-lg font-bold border-2 bg-slate-900
                       ${(status === 'Pendiente' || esStatus(newStatusBD) === 'Pendiente') && 'text-[#FFF508]'}
                       ${(status === 'Finalizado' || esStatus(newStatusBD) === 'Finalizado') && 'text-[#00BB07]'}
-                      ${(status === 'Por Atender' || esStatus(newStatusBD) === 'Por Atender') && 'text-[#FF0707]'}
+                      ${(status === 'Urgente' || esStatus(newStatusBD) === 'Urgente') && 'text-[#FF0707]'}
                       ${(status === 'nonStatus' || esStatus(newStatusBD) === 'nonStatus') && 'text-[#9B9B9B]'}
                   `}
         >
@@ -52,7 +52,7 @@ const TableDescription = ({
           <ul className='w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg absolute z-40'>
             <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'pendient' })}>Pendiente</li>
             <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'finished' })}>Finalizado</li>
-            <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'attending' })}>Por Atender</li>
+            <li className='w-full px-4 py-2 border-b border-gray-200 hover:bg-gray-300' onClick={() => handleStatus({ id: issueId, newStatus: 'urgently' })}>Urgente</li>
           </ul>
         )}
       </button>

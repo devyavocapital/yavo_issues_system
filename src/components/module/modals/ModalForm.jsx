@@ -81,16 +81,7 @@ export default function ModalForm () {
     await fetched(token, 'notifications', 'POST', dataNotification)
     setPosting(false)
 
-    handleNewIssue({
-      _id: response.issueAdded._id,
-      task: values.task,
-      creditNumber: values.creditNumber,
-      nameClient: values.nameClient,
-      status: values.status,
-      daysConfig: response.issueAdded.daysConfig,
-      created_At: response.issueAdded.created_At,
-      nameAssignated: assignated.name
-    })
+    handleNewIssue(response.issueAdded)
     setOpenModal('')
   }
 
