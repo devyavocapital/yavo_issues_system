@@ -82,36 +82,31 @@ export default function ModalComment ({ id, newComment, setChangeStatus }) {
       ...values,
       idIssue: id._id,
       // fileName: inputFile.file.name,
-      assignTo: userAssignated,
-      nameAssignated
+      assignTo: userAssignated === '' ? id.assignTo : userAssignated,
+      nameAssignated: nameAssignated === '' ? id.nameAssignated : nameAssignated,
+      status: (values.status === '' || values.status === undefined) ? id.status : values.status
     }
 
     const dataNotification = {
-      taks: data.taks,
+      taks: id.taks,
       assignTo: data.assignTo,
       issue: data.idIssue
     }
 
     try {
-      if (data.assignTo !== undefined) {
+      if (userAssignated !== '') {
         socket.emit('notification', dataNotification)
         await fetched(token, 'notifications', 'POST', dataNotification)
       }
-      await fetched(token, 'comments', 'POST', data)
+      const commentResponse = await fetched(token, 'comments', 'POST', data)
+
       setChangeStatus({ status: data.status, assignTo: nameAssignated })
       setOpenModal('')
 
-      const date = new Date()
-      const ms = date.getTime()
+      // const date = new Date()
+      // const ms = date.getTime()
 
-      newComment({
-        ...values,
-        nombreCompleto: nameAssignated,
-        created_At: ms,
-        description: values.description,
-        nameAssignated
-        // fileName: !inputFile.file.name ? null : inputFile.file.name
-      })
+      newComment(commentResponse.newCommentSaved)
     } catch (error) {
       console.log(error)
     } finally {
@@ -155,33 +150,35 @@ export default function ModalComment ({ id, newComment, setChangeStatus }) {
                 onChange={(e) => handleChange(e)}
               />
             </div>
-            <div className='max-w-md flex' id='select'>
-              <div className='my-auto'>
-                <Label
-                  htmlFor='status'
-                  value='Cambiar estatus:'
-                  className='text-xl mr-2'
-                />
+            {(user.category === 1 || user._id === id.userId) && (
+              <div className='max-w-md flex' id='select'>
+                <div className='my-auto'>
+                  <Label
+                    htmlFor='status'
+                    value='Cambiar estatus:'
+                    className='text-xl mr-2'
+                  />
+                </div>
+                <Select
+                  id='status'
+                  name='status'
+                  required
+                  onChange={(e) => handleChange(e)}
+                >
+                  <option value={0} name={0} selected>
+                    Sin Asignar
+                  </option>
+                  {statusFilters.map(
+                    (status) =>
+                      status.name !== 'all' && (
+                        <option key={status.name} value={status.name}>
+                          {status.text}
+                        </option>
+                      )
+                  )}
+                </Select>
               </div>
-              <Select
-                id='status'
-                name='status'
-                required
-                onChange={(e) => handleChange(e)}
-              >
-                <option value={0} name={0} selected>
-                  Sin Asignar
-                </option>
-                {statusFilters.map(
-                  (status) =>
-                    status.name !== 'all' && (
-                      <option key={status.name} value={status.name}>
-                        {status.text}
-                      </option>
-                    )
-                )}
-              </Select>
-            </div>
+            )}
             {(user.category === 1 || user._id === id.userId) && (
               <div className='max-w-lg flex' id='select'>
                 <div className='my-auto'>

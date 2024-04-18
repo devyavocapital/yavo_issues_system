@@ -9,7 +9,7 @@ import { validateExpired } from '../utils/validateExpired'
 
 const Dashboard = () => {
   const { token } = useToken()
-  const { filter, newIssue, expired, searchingRef, search } =
+  const { filter, newIssue, expired, searchingRef, search, handleNewIssue } =
     useGlobal()
 
   const [issues, setIssues] = useState([])

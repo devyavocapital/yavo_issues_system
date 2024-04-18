@@ -96,16 +96,6 @@ const ModuleComments = ({
                         Creado: {dateFormated(comment.created_At)}
                       </span>
                     </p>
-                    {/* {comment.fileName !== null
-                      ? (
-                        <img
-                          alt='evidencia de comentario'
-                          src={`${import.meta.env.VITE_FRONTEND_API_URL_IMG
-                            }images/uploads/${comment.fileName}`}
-                          className='w-6/12 rounded-lg'
-                        />
-                        )
-                      : null} */}
                   </div>
                 </div>
               </li>
